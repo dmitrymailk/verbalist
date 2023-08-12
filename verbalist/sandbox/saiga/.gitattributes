@@ -1,0 +1,8 @@
+data/user_oriented_ru.jsonl filter=lfs diff=lfs merge=lfs -text
+data/output.json filter=lfs diff=lfs merge=lfs -text
+data/user_oriented_ru_v2.jsonl filter=lfs diff=lfs merge=lfs -text
+data/vicuna_question_ru.jsonl filter=lfs diff=lfs merge=lfs -text
+data/*_answers.jsonl filter=lfs diff=lfs merge=lfs -text
+data/*_answer.jsonl filter=lfs diff=lfs merge=lfs -text
+data/*_answers.json filter=lfs diff=lfs merge=lfs -text
+data/*_answer.json filter=lfs diff=lfs merge=lfs -text
