@@ -8,6 +8,7 @@ if [ "$OUTPUT" == "" ]; then
 fi
 
 mkdir -p ./models/
+mkdir -p ./models/temp
 
 mkdir -p ./models/$OUTPUT
 export WANDB_NAME=$OUTPUT

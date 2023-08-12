@@ -27,7 +27,7 @@ from transformers import (
 from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
 from peft import get_peft_model, LoraConfig, prepare_model_for_kbit_training
 
-from src.dataset import InstructDataset, ChatDataset
+from src.dataset import ChatDataset
 from src.util.dl import set_random_seed, fix_tokenizer, fix_model
 from src.util.io import read_jsonl
 
@@ -174,37 +174,9 @@ def train(
     templates_path = config.get("templates_path", "ru_alpaca_template.json")
     only_target_loss = config.get("only_target_loss", True)
     mode = config.get("mode", "instruct")
+
     if mode == "instruct":
-        max_source_tokens_count = config["max_source_tokens_count"]
-        max_target_tokens_count = config["max_target_tokens_count"]
-        target_field = config.get("target_field", "output")
-        source_field = config.get("source_field", "input")
-
-        train_dataset = InstructDataset(
-            train_records,
-            tokenizer,
-            max_source_tokens_count=max_source_tokens_count,
-            max_target_tokens_count=max_target_tokens_count,
-            sample_rate=train_sample_rate,
-            input_type=model_type,
-            templates_path=templates_path,
-            target_field=target_field,
-            source_field=source_field,
-            only_target_loss=only_target_loss,
-        )
-
-        val_dataset = InstructDataset(
-            val_records,
-            tokenizer,
-            max_source_tokens_count=max_source_tokens_count,
-            max_target_tokens_count=max_target_tokens_count,
-            sample_rate=val_sample_rate,
-            input_type=model_type,
-            templates_path=templates_path,
-            target_field=target_field,
-            source_field=source_field,
-            only_target_loss=only_target_loss,
-        )
+        pass
     elif mode == "chat":
         max_tokens_count = config["max_tokens_count"]
 
@@ -215,6 +187,7 @@ def train(
             sample_rate=train_sample_rate,
             templates_path=templates_path,
             only_target_loss=only_target_loss,
+            dataset_type="train",
         )
 
         val_dataset = ChatDataset(
@@ -224,6 +197,7 @@ def train(
             sample_rate=train_sample_rate,
             templates_path=templates_path,
             only_target_loss=only_target_loss,
+            dataset_type="valid",
         )
     else:
         assert False
@@ -282,11 +256,7 @@ def train(
 
     # Default model generation params
     model.config.num_beams = 5
-    if mode == "instruct":
-        max_tokens_count = max_target_tokens_count + max_source_tokens_count + 1
-    model.config.max_length = (
-        max_tokens_count if model_type == "causal" else max_target_tokens_count
-    )
+    model.config.max_length = max_tokens_count
 
     if not ddp and torch.cuda.device_count() > 1:
         model.is_parallelizable = True
