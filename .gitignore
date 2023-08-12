@@ -163,3 +163,5 @@ cython_debug/
 models
 wandb
 *.bin
+*train.jsonl
+*valid.jsonl
