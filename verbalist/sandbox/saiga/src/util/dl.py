@@ -13,7 +13,7 @@ def set_random_seed(seed):
     os.environ["PYTHONHASHSEED"] = str(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.benchmark = True
     torch.backends.cudnn.deterministic = True
 
 
@@ -33,16 +33,25 @@ def fix_tokenizer(tokenizer):
         if tokenizer.sep_token_id in (None, tokenizer.vocab_size) and "sep" in token:
             special_tokens["sep_token"] = token
 
-    if tokenizer.sep_token_id in (None, tokenizer.vocab_size) and "bos_token" in special_tokens:
+    if (
+        tokenizer.sep_token_id in (None, tokenizer.vocab_size)
+        and "bos_token" in special_tokens
+    ):
         special_tokens["sep_token"] = special_tokens["bos_token"]
 
-    if tokenizer.pad_token_id in (None, tokenizer.vocab_size) and "pad_token" not in special_tokens:
+    if (
+        tokenizer.pad_token_id in (None, tokenizer.vocab_size)
+        and "pad_token" not in special_tokens
+    ):
         if tokenizer.unk_token_id is not None:
             special_tokens["pad_token"] = tokenizer.unk_token
         else:
             special_tokens["pad_token"] = "<|pad|>"
 
-    if tokenizer.sep_token_id in (None, tokenizer.vocab_size) and "sep_token" not in special_tokens:
+    if (
+        tokenizer.sep_token_id in (None, tokenizer.vocab_size)
+        and "sep_token" not in special_tokens
+    ):
         if tokenizer.bos_token_id is not None:
             special_tokens["sep_token"] = tokenizer.bos_token
         else:
@@ -67,7 +76,7 @@ def fix_model(model, tokenizer, use_resize=True):
         tokenizer.bos_token_id,
         tokenizer.cls_token_id,
         tokenizer.sep_token_id,
-        tokenizer.unk_token_id
+        tokenizer.unk_token_id,
     )
     for bos_candidate in bos_candidates:
         model.config.bos_token_id = bos_candidate
@@ -93,6 +102,6 @@ def gen_batch(records, batch_size):
     batch_start = 0
     while batch_start < len(records):
         batch_end = batch_start + batch_size
-        batch = records[batch_start: batch_end]
+        batch = records[batch_start:batch_end]
         batch_start = batch_end
         yield batch
