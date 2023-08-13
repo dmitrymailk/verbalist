@@ -14,7 +14,7 @@ mkdir -p ./models/temp
 mkdir -p ./models/$OUTPUT
 export WANDB_NAME=$OUTPUT
 
-nohup python -u -m src.train --config-file configs/saiga2_7b.json \
+nohup python -u -m src.train --config-file configs/verbalist_7b.json \
 	--train-file ./train.jsonl \
 	--val-file valid.jsonl  \
 	--output-dir models/$OUTPUT \

@@ -206,6 +206,7 @@ def train(
 
         train_dataset = union_dataset.concat_dataset_train
         val_dataset = union_dataset.concat_dataset_test
+        print(f"Train length={len(train_dataset)} Valid length={len(val_dataset)}")
     else:
         assert False
 

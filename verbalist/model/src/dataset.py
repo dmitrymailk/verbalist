@@ -179,7 +179,7 @@ class ChatDatasetVerbalist(Dataset):
                     print(record)
                     assert False, "Something wrong with you chat record"
                 self.records.append(tensors)
-            torch.save(self.records, filename)
+            # torch.save(self.records, filename)
 
     def __len__(self):
         return len(self.records)
@@ -244,9 +244,9 @@ class ChatDatasetVerbalist(Dataset):
 
             input_ids = torch.LongTensor(input_ids)
             return {
-                "input_ids": input_ids,
-                "attention_mask": attention_mask,
-                "labels": labels,
+                "input_ids": input_ids[: self.max_tokens_count],
+                "attention_mask": attention_mask[: self.max_tokens_count],
+                "labels": labels[: self.max_tokens_count],
             }
 
 
@@ -306,6 +306,10 @@ class ChatDatasetVerbalistUnion(Dataset):
 
             self.concat_dataset_train.extend(dataset_train.records)
             self.concat_dataset_test.extend(dataset_test.records)
+
+            print(
+                f"{name} -> train={len(dataset_train.records)} valid={len(dataset_test.records)}"
+            )
 
     def filter_dataset(
         self,
