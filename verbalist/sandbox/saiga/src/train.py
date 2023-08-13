@@ -31,6 +31,8 @@ from src.dataset import ChatDataset
 from src.util.dl import set_random_seed, fix_tokenizer, fix_model
 from src.util.io import read_jsonl
 
+from src.flash import patch_model
+
 os.environ["WANDB_LOG_MODEL"] = "checkpoint"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -140,11 +142,6 @@ def train(
         config = json.load(r)
 
     device_map = "auto"
-    world_size = int(os.environ.get("WORLD_SIZE", 1))
-    ddp = world_size != 1
-    if ddp:
-        device_map = {"": int(os.environ.get("LOCAL_RANK") or 0)}
-        gradient_accumulation_steps = gradient_accumulation_steps // world_size
 
     deepspeed_config = config.get("deepspeed")
     trainer_config = config["trainer"]
@@ -155,7 +152,7 @@ def train(
         save_total_limit=1,
         load_best_model_at_end=True,
         report_to=report_to,
-        ddp_find_unused_parameters=False if ddp else None,
+        ddp_find_unused_parameters=None,
         deepspeed=deepspeed_config,
         **trainer_config,
     )
@@ -202,12 +199,10 @@ def train(
     else:
         assert False
 
-    if "seq2seq" in model_type:
-        data_collator = DataCollatorForSeq2Seq(tokenizer, pad_to_multiple_of=8)
-    else:
-        data_collator = DataCollatorForTokenClassification(
-            tokenizer, pad_to_multiple_of=8
-        )
+    data_collator = DataCollatorForTokenClassification(
+        tokenizer,
+        pad_to_multiple_of=8,
+    )
 
     print("INPUT_IDS")
     print(data_collator([train_dataset[0], train_dataset[1]])["input_ids"][0])
@@ -221,6 +216,7 @@ def train(
     load_in_4bit = bool(config.get("load_in_4bit", False))
     use_bf16 = bool(trainer_config.get("bf16", False))
     torch_dtype = torch.bfloat16 if use_bf16 else torch.float16
+
     if load_in_8bit:
         assert not load_in_4bit
         model = model_types[model_type].from_pretrained(
@@ -231,6 +227,7 @@ def train(
         )
         model = fix_model(model, tokenizer, use_resize=False)
         model = custom_prepare_model_for_int8_training(model)
+        # model = prepare_model_for_kbit_training(model)
 
     elif load_in_4bit:
         assert not load_in_8bit
@@ -249,18 +246,22 @@ def train(
             torch_dtype=torch_dtype,
         )
         model = fix_model(model, tokenizer, use_resize=False)
-        model = prepare_model_for_kbit_training(model)
+        # model = prepare_model_for_kbit_training(model)
+        model = custom_prepare_model_for_int8_training(model)
     else:
-        model = model_types[model_type].from_pretrained(model_name)
+        model = model_types[model_type].from_pretrained(
+            model_name,
+            device_map=device_map,
+            torch_dtype=torch_dtype,
+        )
         model = fix_model(model, tokenizer)
 
     # Default model generation params
     model.config.num_beams = 5
     model.config.max_length = max_tokens_count
 
-    if not ddp and torch.cuda.device_count() > 1:
-        model.is_parallelizable = True
-        model.model_parallel = True
+    model.is_parallelizable = True
+    model.model_parallel = True
 
     if lora_config:
         lora_config = LoraConfig(**lora_config)

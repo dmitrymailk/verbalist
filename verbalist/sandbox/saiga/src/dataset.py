@@ -127,12 +127,7 @@ class ChatDataset(Dataset):
             assert (labels == bot_token_id).sum() >= (labels == start_token_id).sum()
 
         input_ids = torch.LongTensor(input_ids)
-        assert (
-            input_ids.size(0)
-            == labels.size(0)
-            == attention_mask.size(0)
-            <= self.max_tokens_count
-        )
+        assert input_ids.size(0) == labels.size(0) == attention_mask.size(0)
         return {
             "input_ids": input_ids,
             "labels": labels,

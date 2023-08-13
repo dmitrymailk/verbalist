@@ -35,5 +35,6 @@
     "templates_path": "internal_prompts/saiga_v2.json",
     "model_name": "meta-llama/Llama-2-7b-hf",
     "model_type": "causal",
-    "max_tokens_count": 2000
+    "max_tokens_count": 2048,
+    "use_flash": true
 }
