@@ -171,6 +171,7 @@ def train(
     templates_path = config.get("templates_path", "ru_alpaca_template.json")
     only_target_loss = config.get("only_target_loss", True)
     mode = config.get("mode", "instruct")
+    use_flash = config.get("use_flash", False)
 
     if mode == "instruct":
         pass
@@ -256,6 +257,8 @@ def train(
         )
         model = fix_model(model, tokenizer)
 
+    if use_flash:
+        patch_model(model)
     # Default model generation params
     model.config.num_beams = 5
     model.config.max_length = max_tokens_count

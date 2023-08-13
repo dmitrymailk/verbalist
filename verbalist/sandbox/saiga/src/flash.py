@@ -330,9 +330,6 @@ def patch_model(
     if model.__class__.__name__ == "RWForCausalLM":
         model = model.base_model
 
-    if isinstance(model, FalconForCausalLM):
-        model = model.transformer
-
     attention_key_lookup = {
         LlamaModel: "self_attn",
     }
