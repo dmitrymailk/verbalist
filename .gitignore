@@ -163,5 +163,5 @@ cython_debug/
 models
 wandb
 *.bin
-verbalist/sandbox/saiga/train.jsonl
-verbalist/sandbox/saiga/valid.jsonl
+verbalist/model/train.jsonl
+verbalist/model/valid.jsonl
