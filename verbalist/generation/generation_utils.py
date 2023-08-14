@@ -9,8 +9,8 @@ import gc
 class VerbalistConversation:
     def __init__(
         self,
-        message_template="<s> {role}\n{content} </s>\n",
-        system_prompt="Ты — Сайга, русскоязычный автоматический ассистент. Ты разговариваешь с людьми и помогаешь им.",
+        message_template="<s> {role}\n{content} </s> \n",
+        system_prompt="Ты — Буквоед, русскоязычный автоматический ассистент. Ты разговариваешь с людьми и помогаешь им.",
         start_token_id=1,
         bot_token_id=9225,
     ):
