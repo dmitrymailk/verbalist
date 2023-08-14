@@ -40,12 +40,22 @@
     "datasets_configs": [
         {
             "name": "dim/oasst_en",
-            "status": "all",
+            "status": "ok",
             "test_size": 1
         },
         {
             "name": "dim/oasst_ru",
+            "status": "ok",
+            "test_size": 1
+        },
+        {
+            "name": "dim/lima",
             "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/logic_tasks_ru",
+            "status": "ok",
             "test_size": 1
         }
     ]

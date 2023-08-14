@@ -321,8 +321,9 @@ class ChatDatasetVerbalistUnion(Dataset):
             return True
         elif status == "ok":
             filter_dict = {
-                "dim/oasst_en": self.filter_oasst,
-                "dim/oasst_ru": self.filter_oasst,
+                "dim/oasst_en": self.default_filter,
+                "dim/oasst_ru": self.default_filter,
+                "dim/logic_tasks_ru": self.default_filter,
             }
             filter_func = filter_dict[dataset_name]
 
@@ -332,7 +333,7 @@ class ChatDatasetVerbalistUnion(Dataset):
         else:
             assert False, "Invalid status"
 
-    def filter_oasst(self, item):
+    def default_filter(self, item):
         return item["status"] == "ok"
 
     def __getitem__(self, pos):
