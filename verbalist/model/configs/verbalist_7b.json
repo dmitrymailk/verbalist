@@ -57,6 +57,11 @@
             "name": "dim/logic_tasks_ru",
             "status": "ok",
             "test_size": 1
+        },
+        {
+            "name": "dim/what_where_when_selected",
+            "status": "all",
+            "test_size": 1
         }
     ]
 }
