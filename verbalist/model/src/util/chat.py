@@ -145,8 +145,8 @@ class ConversationVerbalist:
     def get_prompt(self, tokenizer, max_tokens: int = None, add_suffix: bool = False):
         final_text = ""
         messages = self.messages
-        if max_tokens is not None:
-            messages = self.shrink(tokenizer, messages, max_tokens)
+        # if max_tokens is not None:
+        #     messages = self.shrink(tokenizer, messages, max_tokens)
 
         for message in messages:
             message_text = self.message_template.format(**message)

@@ -168,5 +168,6 @@ verbalist/model/valid.jsonl
 *sharegpt_gpt4*
 *sharegpt_clean*
 *sg_90k_part*
+*sg_90k_*
 *what_where_when*.csv
 *essayforum*.csv
