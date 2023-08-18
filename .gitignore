@@ -171,3 +171,5 @@ verbalist/model/valid.jsonl
 *sg_90k_*
 *what_where_when*.csv
 *essayforum*.csv
+*.*.zip
+[0-9][0-9][0-9][0-9].[0-9][0-9][0-9][0-9][0-9]*
