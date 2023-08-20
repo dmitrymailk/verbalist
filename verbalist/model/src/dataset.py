@@ -384,6 +384,7 @@ class ChatDatasetVerbalistUnion(Dataset):
             "dim/roleplay_instruct_v2_final": self.roleplay_instruct_v2_final,
             "dim/ru_turbo_alpaca_evol_instruct_3k": self.ru_turbo_alpaca_evol_instruct_3k,
             "dim/ru_turbo_saiga_3k": self.ru_turbo_saiga_3k,
+            "dim/essayforum_writing_prompts_6k": self.essayforum_writing_prompts_6k,
         }
 
         return convertsion_functions[dataset_name](dataset)
@@ -495,3 +496,53 @@ class ChatDatasetVerbalistUnion(Dataset):
                 )
 
         return new_dataset
+
+    def essayforum_writing_prompts_6k(self, dataset):
+        selected_prompts = [
+            "rate the essay based on its clarity, organization, and use of evidence to support the argument. Justify your rating with specific examples from the essay and evaluation.",
+            "Rate the essay based on the clarity of the writer's opinion, development of reasoning paragraphs, and effectiveness of the concluding summary.",
+            "Rate the essay based on the writer's ability to present a clear and cohesive argument, provide relevant examples and reasoning, and effectively address the topic.",
+            "Evaluate the essay provided in terms of coherence, cohesiveness, and the appropriateness of the response to the given question.",
+            "Evaluate the essay by discussing its strengths and weaknesses.",
+            "Evaluate the essay provided above. Assess the writer's ability to follow the given instructions and provide a well-structured and coherent response.",
+            "Evaluate the essay based on the given prompt and provide your analysis.",
+            "Please rate the essay based on how clear it is, how well it is organized, and how effectively it uses evidence to support the argument. Please justify your rating with specific examples from the essay and your evaluation.",
+            "Hey there! Can you please rate this essay for me? I'd like you to consider how clear it is, how well it's organized, and how effectively it uses evidence to support its argument. It would be great if you could back up your rating with specific examples from the essay and explain your evaluation. Thanks a bunch!",
+            "Rate the essay based on how clear the writer's opinion is, how well they develop their reasoning paragraphs, and how effective their concluding summary is.",
+            "Rate the essay based on the writer's ability to present a clear and cohesive argument, provide relevant examples and reasoning, and effectively address the topic. Can you do that for me, please?",
+            "Hey there! Can you please take a look at this essay and tell me what you think about its coherence, cohesiveness, and how well it responds to the given question? Thanks!",
+            "Hey there! Can you take a look at this essay and give me your thoughts on it? I'd love to hear about its strengths and weaknesses.",
+            "Can you please evaluate the essay above? I want to know if the writer followed the instructions properly and if their response is well-structured and coherent.",
+            "hey, can you read this essay and tell me what you think?",
+            "Rate essay on clarity, organization, and evidence.",
+            "Rate essay on clarity, development, and conclusion.",
+            "Rate essay on clarity, examples, reasoning, and topic.",
+            "Evaluate coherence, cohesiveness, and appropriateness of essay.",
+            "Evaluate essay's strengths and weaknesses.",
+            "Evaluate essay structure and coherence.",
+            "Evaluate and analyze an essay based on a prompt.",
+            "Rating essay clarity, organization, and evidence usage.",
+            "Rate essay on clarity, organization, and evidence.",
+            "Rate essay on clarity, reasoning development, and conclusion.",
+            "Rate essay on clarity, examples, reasoning, and addressing topic.",
+            "Prompt summary: Evaluate essay coherence, cohesiveness, and relevance.",
+            "Evaluate essay's strengths and weaknesses.",
+            "Evaluate essay structure and coherence.",
+            "Request for feedback on an essay.",
+            "evaluate this essay",
+            "evaluate essay",
+            "rate essay",
+        ]
+
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+            generated_instruction = selected_prompts[i % len(selected_prompts)]
+
+            question = dataset[i]["prompt"]
+            question = f"{question}\n\n{generated_instruction}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = f"{dataset[i]['answer']}"
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset

@@ -256,13 +256,18 @@ def train(
             #     "status": "all",
             #     "test_size": 1,
             # },
+            # {
+            #     "name": "dim/ru_turbo_alpaca_evol_instruct_3k",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/ru_turbo_saiga_3k",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
             {
-                "name": "dim/ru_turbo_alpaca_evol_instruct_3k",
-                "status": "all",
-                "test_size": 1,
-            },
-            {
-                "name": "dim/ru_turbo_saiga_3k",
+                "name": "dim/essayforum_writing_prompts_6k",
                 "status": "all",
                 "test_size": 1,
             },
