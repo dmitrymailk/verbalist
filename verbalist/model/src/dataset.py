@@ -385,6 +385,8 @@ class ChatDatasetVerbalistUnion(Dataset):
             "dim/ru_turbo_alpaca_evol_instruct_3k": self.ru_turbo_alpaca_evol_instruct_3k,
             "dim/ru_turbo_saiga_3k": self.ru_turbo_saiga_3k,
             "dim/essayforum_writing_prompts_6k": self.essayforum_writing_prompts_6k,
+            "dim/openreview_prompts_65": self.openreview_prompts_65,
+            "dim/kinomania_scripts": self.kinomania_scripts,
         }
 
         return convertsion_functions[dataset_name](dataset)
@@ -525,7 +527,7 @@ class ChatDatasetVerbalistUnion(Dataset):
             "Rate essay on clarity, organization, and evidence.",
             "Rate essay on clarity, reasoning development, and conclusion.",
             "Rate essay on clarity, examples, reasoning, and addressing topic.",
-            "Prompt summary: Evaluate essay coherence, cohesiveness, and relevance.",
+            "Evaluate essay coherence, cohesiveness, and relevance.",
             "Evaluate essay's strengths and weaknesses.",
             "Evaluate essay structure and coherence.",
             "Request for feedback on an essay.",
@@ -543,6 +545,31 @@ class ChatDatasetVerbalistUnion(Dataset):
             dataset[i][self.conversation_field].append(question)
 
             answer = f"{dataset[i]['answer']}"
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def openreview_prompts_65(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['latex']}\n\n{dataset[i]['help_prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["full_review"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def kinomania_scripts(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}\n\n{dataset[i]['movie_description']}"
+            # question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["movie_script"][:6000]
             dataset[i][self.conversation_field].append(answer)
 
         return dataset

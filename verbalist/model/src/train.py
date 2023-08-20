@@ -266,8 +266,23 @@ def train(
             #     "status": "all",
             #     "test_size": 1,
             # },
+            # {
+            #     "name": "dim/essayforum_writing_prompts_6k",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/openreview_prompts_65",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/openreview_prompts_65",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
             {
-                "name": "dim/essayforum_writing_prompts_6k",
+                "name": "dim/kinomania_scripts",
                 "status": "all",
                 "test_size": 1,
             },
