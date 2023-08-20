@@ -195,7 +195,78 @@ def train(
             dataset_type="valid",
         )
     elif mode == "verbalist_chat":
-        datasets_configs = config["datasets_configs"]
+        # datasets_configs = config["datasets_configs"]
+        datasets_configs = [
+            # {
+            #     "name": "dim/oasst_en",
+            #     "status": "ok",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/oasst_ru",
+            #     "status": "ok",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/lima",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/logic_tasks_ru",
+            #     "status": "ok",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/what_where_when_3k",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/competition_math_selected",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/wikihow_en",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/wikihow_ru",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/leetcodesolutions_en_2k",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/sharegpt_short_en",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/sharegpt_short_ru",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/roleplay_instruct_v2_final",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
+            {
+                "name": "dim/ru_turbo_alpaca_evol_instruct_3k",
+                "status": "all",
+                "test_size": 1,
+            },
+            {
+                "name": "dim/ru_turbo_saiga_3k",
+                "status": "all",
+                "test_size": 1,
+            },
+        ]
 
         union_dataset = ChatDatasetVerbalistUnion(
             dataset_configs=datasets_configs,

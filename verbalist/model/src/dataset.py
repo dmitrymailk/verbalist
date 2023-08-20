@@ -237,6 +237,13 @@ class ChatDatasetVerbalist(Dataset):
                 labels[start_idx:end_idx] = -100
 
             if (labels == start_token_id).sum() == 0:
+                print("=" * 100)
+                print("=" * 100)
+                print("=" * 100)
+                print(record)
+                print("=" * 100)
+                print(full_text)
+                print("=" * 100)
                 raise "Something wrong with you code"
 
             assert (labels == start_token_id).sum() == (labels == end_token_id).sum()
@@ -266,15 +273,17 @@ class ChatDatasetVerbalistUnion(Dataset):
         self.concat_dataset_train = []
         self.concat_dataset_test = []
 
-        for dataset_config in self.dataset_configs:
-            name = dataset_config["name"]
-            status = dataset_config["status"]
-            print(f"{name} - {status}")
+        self.conversation_field = "conversation_text"
 
-            dataset = load_dataset(name)
+        for dataset_config in self.dataset_configs:
+            dataset_name = dataset_config["name"]
+            status = dataset_config.get("status", "all")
+            print(f"{dataset_name} - {status}")
+
+            dataset = load_dataset(dataset_name)
             dataset = dataset["train"].filter(
                 lambda item: self.filter_dataset(
-                    dataset_name=name,
+                    dataset_name=dataset_name,
                     item=item,
                     status=status,
                 )
@@ -282,8 +291,18 @@ class ChatDatasetVerbalistUnion(Dataset):
 
             test_size = dataset_config["test_size"]
             dataset = dataset.train_test_split(test_size=test_size)
+
             dataset_train = dataset["train"].to_list()
             dataset_test = dataset["test"].to_list()
+
+            dataset_train = self.standart_dataset(
+                dataset=dataset_train,
+                dataset_name=dataset_name,
+            )
+            dataset_test = self.standart_dataset(
+                dataset=dataset_test,
+                dataset_name=dataset_name,
+            )
 
             dataset_train = ChatDatasetVerbalist(
                 original_records=dataset_train,
@@ -306,9 +325,11 @@ class ChatDatasetVerbalistUnion(Dataset):
 
             self.concat_dataset_train.extend(dataset_train.records)
             self.concat_dataset_test.extend(dataset_test.records)
-
+            print("=" * 100)
+            print("=" * 100)
+            print("=" * 100)
             print(
-                f"{name} -> train={len(dataset_train.records)} valid={len(dataset_test.records)}"
+                f"{dataset_name} -> train={len(dataset_train.records)} valid={len(dataset_test.records)}"
             )
 
     def filter_dataset(
@@ -324,6 +345,7 @@ class ChatDatasetVerbalistUnion(Dataset):
                 "dim/oasst_en": self.default_filter,
                 "dim/oasst_ru": self.default_filter,
                 "dim/logic_tasks_ru": self.default_filter,
+                "dim/logic_tasks_ru": lambda item: item["ok/trash"] == "ok",
             }
             filter_func = filter_dict[dataset_name]
 
@@ -341,3 +363,135 @@ class ChatDatasetVerbalistUnion(Dataset):
 
     def __len__(self):
         return len(self.concat_dataset_train)
+
+    def standart_dataset(
+        self,
+        dataset=None,
+        dataset_name=None,
+    ):
+        convertsion_functions = {
+            "dim/oasst_en": self.default_convert,
+            "dim/oasst_ru": self.default_convert,
+            "dim/lima": self.lima,
+            "dim/logic_tasks_ru": self.logic_tasks_ru,
+            "dim/what_where_when_3k": self.what_where_when_3k,
+            "dim/competition_math_selected": self.competition_math_selected,
+            "dim/wikihow_en": self.wikihow,
+            "dim/wikihow_ru": self.wikihow,
+            "dim/leetcodesolutions_en_2k": self.leetcodesolutions_en_2k,
+            "dim/sharegpt_short_en": self.sharegpt_short,
+            "dim/sharegpt_short_ru": self.sharegpt_short,
+            "dim/roleplay_instruct_v2_final": self.roleplay_instruct_v2_final,
+            "dim/ru_turbo_alpaca_evol_instruct_3k": self.ru_turbo_alpaca_evol_instruct_3k,
+            "dim/ru_turbo_saiga_3k": self.ru_turbo_saiga_3k,
+        }
+
+        return convertsion_functions[dataset_name](dataset)
+
+    def default_convert(self, dataset):
+        return dataset
+
+    def lima(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = dataset[i].pop("conversations")
+
+        return dataset
+
+    def logic_tasks_ru(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+            dataset[i][self.conversation_field].append(dataset[i]["task"])
+            dataset[i][self.conversation_field].append(dataset[i]["answer"])
+
+        return dataset
+
+    def what_where_when_3k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = dataset[i]["question"]
+            dataset[i][self.conversation_field].append(question)
+
+            answer = f"{dataset[i]['explanation']}\n{dataset[i]['answer']}"
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def competition_math_selected(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = dataset[i]["problem"]
+            dataset[i][self.conversation_field].append(question)
+
+            answer = f"{dataset[i]['solution']}"
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def wikihow(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = dataset[i]["INSTRUCTION"]
+            dataset[i][self.conversation_field].append(question)
+
+            answer = f"{dataset[i]['RESPONSE']}"
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def leetcodesolutions_en_2k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = dataset[i]["input"]
+            dataset[i][self.conversation_field].append(question)
+
+            answer = f"{dataset[i]['output']}"
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def sharegpt_short(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = dataset[i]["conversation"]
+
+        return dataset
+
+    def roleplay_instruct_v2_final(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['instruction']}\n{dataset[i]['input']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["output"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def ru_turbo_alpaca_evol_instruct_3k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = dataset[i]["instruction"].replace("Вход:", "")
+            dataset[i][self.conversation_field].append(question)
+
+            answer = f"{dataset[i]['output']}"
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def ru_turbo_saiga_3k(self, dataset):
+        new_dataset = []
+        for i in range(len(dataset)):
+            content = dataset[i]["messages"]["content"]
+            if len(content) > 0:
+                new_dataset.append(
+                    {
+                        self.conversation_field: content,
+                    }
+                )
+
+        return new_dataset
