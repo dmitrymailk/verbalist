@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=3
+export CUDA_VISIBLE_DEVICES=1
 # export CUDA_VISIBLE_DEVICES=2
 export WANDB_BASE_URL="https://api.wandb.ai"
 
