@@ -281,8 +281,18 @@ def train(
             #     "status": "all",
             #     "test_size": 1,
             # },
+            # {
+            #     "name": "dim/kinomania_scripts",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
+            # {
+            #     "name": "dim/bugurt_thread_prompts",
+            #     "status": "all",
+            #     "test_size": 1,
+            # },
             {
-                "name": "dim/kinomania_scripts",
+                "name": "dim/russian_lyrics_prompts",
                 "status": "all",
                 "test_size": 1,
             },

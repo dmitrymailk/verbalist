@@ -387,6 +387,8 @@ class ChatDatasetVerbalistUnion(Dataset):
             "dim/essayforum_writing_prompts_6k": self.essayforum_writing_prompts_6k,
             "dim/openreview_prompts_65": self.openreview_prompts_65,
             "dim/kinomania_scripts": self.kinomania_scripts,
+            "dim/bugurt_thread_prompts": self.bugurt_thread_prompts,
+            "dim/russian_lyrics_prompts": self.russian_lyrics_prompts,
         }
 
         return convertsion_functions[dataset_name](dataset)
@@ -570,6 +572,31 @@ class ChatDatasetVerbalistUnion(Dataset):
             dataset[i][self.conversation_field].append(question)
 
             answer = dataset[i]["movie_script"][:6000]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def bugurt_thread_prompts(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            # question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["bugurt"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def russian_lyrics_prompts(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["solution"]
             dataset[i][self.conversation_field].append(answer)
 
         return dataset
