@@ -1,0 +1,141 @@
+{
+    "trainer": {
+        "evaluation_strategy": "steps",
+        "per_device_train_batch_size": 1,
+        "per_device_eval_batch_size": 1,
+        "gradient_accumulation_steps": 128,
+        "eval_steps": 50,
+        "save_steps": 50,
+        "logging_steps": 5,
+        "learning_rate": 0.0003,
+        "num_train_epochs": 10,
+        "lr_scheduler_type": "cosine",
+        "warmup_steps": 30,
+        "fp16": false,
+        "bf16": true,
+        "torch_compile": false,
+        "optim": "adamw_torch"
+    },
+    "lora": {
+        "r": 16,
+        "lora_alpha": 16,
+        "lora_dropout": 0.05,
+        "bias": "none",
+        "target_modules": [
+            "q_proj",
+            "v_proj",
+            "k_proj",
+            "o_proj"
+        ],
+        "task_type": "CAUSAL_LM"
+    },
+    "load_in_4bit": true,
+    "only_target_loss": true,
+    "mode": "verbalist_chat",
+    "templates_path": "internal_prompts/verbalist.json",
+    "model_name": "huggyllama/llama-30b",
+    "model_type": "causal",
+    "max_tokens_count": 2048,
+    "use_flash": false,
+    "datasets_configs": [
+        {
+            "name": "dim/oasst_en",
+            "status": "ok",
+            "test_size": 1
+        },
+        {
+            "name": "dim/oasst_ru",
+            "status": "ok",
+            "test_size": 1
+        },
+        {
+            "name": "dim/lima",
+            "test_size": 1
+        },
+        {
+            "name": "dim/logic_tasks_ru",
+            "status": "ok",
+            "test_size": 1
+        },
+        {
+            "name": "dim/what_where_when_3k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/competition_math_selected",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/wikihow_en",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/wikihow_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/leetcodesolutions_en_2k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/sharegpt_short_en",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/sharegpt_short_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/roleplay_instruct_v2_final",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/ru_turbo_alpaca_evol_instruct_3k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/ru_turbo_saiga_3k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/essayforum_writing_prompts_6k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/openreview_prompts_65",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/openreview_prompts_65",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/kinomania_scripts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/bugurt_thread_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/russian_lyrics_prompts",
+            "status": "all",
+            "test_size": 1
+        }
+    ]
+}

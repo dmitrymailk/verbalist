@@ -1,5 +1,5 @@
-# export CUDA_VISIBLE_DEVICES=1
-export CUDA_VISIBLE_DEVICES=3
+export CUDA_VISIBLE_DEVICES=1
+# export CUDA_VISIBLE_DEVICES=2
 export WANDB_BASE_URL="https://api.wandb.ai"
 
 OUTPUT=$1
@@ -15,7 +15,9 @@ mkdir -p ./models/$OUTPUT
 export WANDB_NAME=$OUTPUT
 
 # nohup python -u -m src.train --config-file configs/verbalist_7b.json \
-nohup python -u -m src.train --config-file configs/verbalist_13b.json \
+# nohup python -u -m src.train --config-file configs/verbalist_13b.json \
+nohup python -u -m src.train --config-file configs/verbalist_30b.json \
+# nohup python -u -m src.train --config-file configs/verbalist_65b.json \
 	--train-file ./train.jsonl \
 	--val-file valid.jsonl  \
 	--output-dir models/$OUTPUT \
