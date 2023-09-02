@@ -118,11 +118,6 @@
             "test_size": 1
         },
         {
-            "name": "dim/openreview_prompts_65",
-            "status": "all",
-            "test_size": 1
-        },
-        {
             "name": "dim/kinomania_scripts",
             "status": "all",
             "test_size": 1
@@ -134,6 +129,126 @@
         },
         {
             "name": "dim/russian_lyrics_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/ru_instruct_gpt4",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/ru_instruct_gpt4",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/gpt_roleplay_realm",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/ultrachat_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/tldr_17_3k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/grade_school_math_instructions_3k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/tldr_news_3k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/scitldr",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/linux_man_pages_tldr_summarized",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/grade_school_math_instructions_ru_3k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/dialogsum_ru_3k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/dialogsum_3k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/dolphin_ru_3k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/dolphin_flan1m_alpaca_uncensored_3k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/HC3_ru_8k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/ru_word_games_3k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/runne_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/horoscopes_ru_1k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/huggingartists_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/lurk_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/yandex_q_10k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/panorama_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/resh_edu_short_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/bugurt_completion_prompts",
             "status": "all",
             "test_size": 1
         }

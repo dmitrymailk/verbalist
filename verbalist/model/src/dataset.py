@@ -389,6 +389,29 @@ class ChatDatasetVerbalistUnion(Dataset):
             "dim/kinomania_scripts": self.kinomania_scripts,
             "dim/bugurt_thread_prompts": self.bugurt_thread_prompts,
             "dim/russian_lyrics_prompts": self.russian_lyrics_prompts,
+            "dim/ru_instruct_gpt4": self.ru_instruct_gpt4,
+            "dim/gpt_roleplay_realm": self.gpt_roleplay_realm,
+            "dim/ultrachat_ru": self.ultrachat_ru,
+            "dim/tldr_17_3k": self.tldr_17_3k,
+            "dim/grade_school_math_instructions_3k": self.grade_school_math_instructions_3k,
+            "dim/tldr_news_3k": self.tldr_news_3k,
+            "dim/scitldr": self.scitldr,
+            "dim/linux_man_pages_tldr_summarized": self.linux_man_pages_tldr_summarized,
+            "dim/grade_school_math_instructions_ru_3k": self.grade_school_math_instructions_ru_3k,
+            "dim/dialogsum_ru_3k": self.dialogsum_ru_3k,
+            "dim/dialogsum_3k": self.dialogsum_3k,
+            "dim/dolphin_ru_3k": self.dolphin_ru_3k,
+            "dim/dolphin_flan1m_alpaca_uncensored_3k": self.dolphin_flan1m_alpaca_uncensored_3k,
+            "dim/HC3_ru_8k": self.HC3_ru_8k,
+            "dim/ru_word_games_3k": self.ru_word_games_3k,
+            "dim/runne_prompts": self.runne_prompts,
+            "dim/horoscopes_ru_1k": self.horoscopes_ru_1k,
+            "dim/huggingartists_prompts": self.huggingartists_prompts,
+            "dim/lurk_prompts": self.lurk_prompts,
+            "dim/yandex_q_10k": self.yandex_q_10k,
+            "dim/panorama_prompts": self.panorama_prompts,
+            "dim/resh_edu_short_prompts": self.resh_edu_short_prompts,
+            "dim/bugurt_completion_prompts": self.bugurt_completion_prompts,
         }
 
         return convertsion_functions[dataset_name](dataset)
@@ -597,6 +620,272 @@ class ChatDatasetVerbalistUnion(Dataset):
             dataset[i][self.conversation_field].append(question)
 
             answer = dataset[i]["solution"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def ru_instruct_gpt4(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["solution"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def gpt_roleplay_realm(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = dataset[i]["conversation"]
+
+        return dataset
+
+    def ultrachat_ru(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = dataset[i]["conversation"]
+
+        return dataset
+
+    def tldr_17_3k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['content']} TL;DR"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["summary"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def grade_school_math_instructions_3k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['INSTRUCTION']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["RESPONSE"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def tldr_news_3k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['content']} TL;DR"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["headline"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def scitldr(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['source']} TL;DR"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["target"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def linux_man_pages_tldr_summarized(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['Text']} TL;DR"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["Summary"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def grade_school_math_instructions_ru_3k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['question']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["answer"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def dialogsum_ru_3k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['dialogue']} TL;DR"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["summary"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def dialogsum_3k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['dialogue']} TL;DR"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["summary"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def dolphin_ru_3k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['input']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["output"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def dolphin_flan1m_alpaca_uncensored_3k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['input']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["output"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def HC3_ru_8k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['question']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["human_answers"][0]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def ru_word_games_3k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["answer"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def runne_prompts(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = (
+                f"Найди все именованные сущности в данном тексте: {dataset[i]['text']}"
+            )
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["parsed_entities"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def horoscopes_ru_1k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["prediction"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def huggingartists_prompts(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["song"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def lurk_prompts(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["text"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def yandex_q_10k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['description']}\n{dataset[i]['question']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["answer"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def panorama_prompts(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["text"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def resh_edu_short_prompts(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["solution"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def bugurt_completion_prompts(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["bugurt"]
             dataset[i][self.conversation_field].append(answer)
 
         return dataset
