@@ -1,0 +1,3 @@
+[submodule "verbalist/sandbox/llama.cpp"]
+	path = verbalist/sandbox/llama.cpp
+	url = https://github.com/dmitrymailk/llama.cpp.git
