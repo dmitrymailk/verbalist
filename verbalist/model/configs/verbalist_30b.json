@@ -138,11 +138,6 @@
             "test_size": 1
         },
         {
-            "name": "dim/ru_instruct_gpt4",
-            "status": "all",
-            "test_size": 1
-        },
-        {
             "name": "dim/gpt_roleplay_realm",
             "status": "all",
             "test_size": 1

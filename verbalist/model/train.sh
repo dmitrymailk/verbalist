@@ -16,8 +16,8 @@ export WANDB_NAME=$OUTPUT
 
 # nohup python -u -m src.train --config-file configs/verbalist_7b.json \
 # nohup python -u -m src.train --config-file configs/verbalist_13b.json \
-nohup python -u -m src.train --config-file configs/verbalist_30b.json \
 # nohup python -u -m src.train --config-file configs/verbalist_65b.json \
+nohup python -u -m src.train --config-file configs/verbalist_30b.json \
 	--train-file ./train.jsonl \
 	--val-file valid.jsonl  \
 	--output-dir models/$OUTPUT \
