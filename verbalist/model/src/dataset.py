@@ -280,7 +280,11 @@ class ChatDatasetVerbalistUnion(Dataset):
             status = dataset_config.get("status", "all")
             print(f"{dataset_name} - {status}")
 
-            dataset = load_dataset(dataset_name, download_mode='force_redownload')
+            dataset = load_dataset(
+                dataset_name,
+                download_mode="force_redownload",
+                keep_in_memory=True,
+            )
             dataset = dataset["train"].filter(
                 lambda item: self.filter_dataset(
                     dataset_name=dataset_name,
