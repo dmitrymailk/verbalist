@@ -1,3 +1,7 @@
+from datasets import disable_caching
+
+disable_caching()
+
 import random
 import json
 from typing import Optional
@@ -13,7 +17,10 @@ from tqdm import tqdm
 
 from src.util.chat import Conversation, ConversationVerbalist
 import hashlib
+import concurrent.futures
+from joblib import Parallel, delayed
 import os
+
 
 from datasets import load_dataset
 
@@ -164,21 +171,21 @@ class ChatDatasetVerbalist(Dataset):
 
         self.records = []
 
-        filename = f"{tokenizer.name_or_path}{templates_path}{max_tokens_count}{test_size}{status}".encode()
-        print(filename)
-        filename = hashlib.sha256(filename).hexdigest()
-        filename = f"./models/temp/{filename}_{dataset_type}.bin"
-        print(filename)
+        # filename = f"{tokenizer.name_or_path}{templates_path}{max_tokens_count}{test_size}{status}".encode()
+        # print(filename)
+        # filename = hashlib.sha256(filename).hexdigest()
+        # filename = f"./models/temp/{filename}_{dataset_type}.bin"
+        # print(filename)
 
-        if os.path.isfile(filename):
-            self.records = torch.load(filename)
-        else:
-            for record in tqdm(original_records):
-                tensors = self.convert_record(record)
-                if tensors is None:
-                    print(record)
-                    assert False, "Something wrong with you chat record"
-                self.records.append(tensors)
+        # if os.path.isfile(filename):
+        #     self.records = torch.load(filename)
+        # else:
+        for record in tqdm(original_records):
+            tensors = self.convert_record(record)
+            if tensors is None:
+                print(record)
+                assert False, "Something wrong with you chat record"
+            self.records.append(tensors)
             # torch.save(self.records, filename)
 
     def __len__(self):
@@ -269,12 +276,121 @@ class ChatDatasetVerbalistUnion(Dataset):
         self.chat_datasets = []
         self.tokenizer = tokenizer
         self.templates_path = templates_path
+        self.max_tokens_count = max_tokens_count
 
         self.concat_dataset_train = []
         self.concat_dataset_test = []
 
         self.conversation_field = "conversation_text"
 
+        self.get_dataset_parallel()
+
+    def get_dataset_parallel(
+        self,
+    ):
+        # with concurrent.futures.ProcessPoolExecutor(
+        #     max_workers=5,
+        # ) as executor:
+        #     datasets = tqdm(
+        #         executor.map(
+        #             self.get_dataset,
+        #             self.dataset_configs,
+        #             chunksize=1,
+        #         )
+        #     )
+        #     datasets = list(datasets)
+        #     print(datasets)
+        #     for dataset in datasets:
+        #         train, valid = dataset
+        #         self.concat_dataset_train.extend(train)
+        #         self.concat_dataset_test.extend(valid)
+        datasets = Parallel(
+            n_jobs=30,
+            batch_size=1,
+        )
+        datasets = datasets(
+            [delayed(self.get_dataset)(config) for config in self.dataset_configs]
+        )
+        for dataset in datasets:
+            train, valid = dataset
+            self.concat_dataset_train.extend(train)
+            self.concat_dataset_test.extend(valid)
+
+    def get_dataset(self, dataset_config):
+        dataset_name = dataset_config["name"]
+        status = dataset_config.get("status", "all")
+        print(f"{dataset_name} - {status}")
+
+        dataset = load_dataset(
+            dataset_name,
+            download_mode="force_redownload",
+            keep_in_memory=True,
+        )
+        dataset = dataset["train"].filter(
+            lambda item: self.filter_dataset(
+                dataset_name=dataset_name,
+                item=item,
+                status=status,
+            ),
+            keep_in_memory=True,
+            load_from_cache_file=False,
+        )
+
+        test_size = dataset_config["test_size"]
+        dataset = dataset.train_test_split(
+            test_size=test_size,
+            keep_in_memory=True,
+            load_from_cache_file=False,
+        )
+
+        dataset_train = dataset["train"].to_list()
+        dataset_test = dataset["test"].to_list()
+
+        print("standart_dataset dataset_train...")
+        dataset_train = self.standart_dataset(
+            dataset=dataset_train,
+            dataset_name=dataset_name,
+        )
+
+        print("standart_dataset dataset_test...")
+        dataset_test = self.standart_dataset(
+            dataset=dataset_test,
+            dataset_name=dataset_name,
+        )
+
+        dataset_train = ChatDatasetVerbalist(
+            original_records=dataset_train,
+            tokenizer=self.tokenizer,
+            templates_path=self.templates_path,
+            test_size=test_size,
+            max_tokens_count=self.max_tokens_count,
+            dataset_type="train",
+            status=status,
+        )
+        dataset_test = ChatDatasetVerbalist(
+            original_records=dataset_test,
+            tokenizer=self.tokenizer,
+            templates_path=self.templates_path,
+            max_tokens_count=self.max_tokens_count,
+            test_size=test_size,
+            dataset_type="test",
+            status=status,
+        )
+
+        # self.concat_dataset_train.extend(dataset_train.records)
+        # self.concat_dataset_test.extend(dataset_test.records)
+        print(
+            f"{dataset_name} -> train={len(dataset_train.records)} valid={len(dataset_test.records)}"
+        )
+        print("=" * 100)
+        print("=" * 100)
+        print("=" * 100)
+        return [
+            dataset_train.records,
+            dataset_test.records,
+        ]
+
+    def get_datasets(self):
         for dataset_config in self.dataset_configs:
             dataset_name = dataset_config["name"]
             status = dataset_config.get("status", "all")
@@ -290,19 +406,28 @@ class ChatDatasetVerbalistUnion(Dataset):
                     dataset_name=dataset_name,
                     item=item,
                     status=status,
-                )
+                ),
+                keep_in_memory=True,
+                load_from_cache_file=False,
             )
 
             test_size = dataset_config["test_size"]
-            dataset = dataset.train_test_split(test_size=test_size)
+            dataset = dataset.train_test_split(
+                test_size=test_size,
+                keep_in_memory=True,
+                load_from_cache_file=False,
+            )
 
             dataset_train = dataset["train"].to_list()
             dataset_test = dataset["test"].to_list()
 
+            print("standart_dataset dataset_train...")
             dataset_train = self.standart_dataset(
                 dataset=dataset_train,
                 dataset_name=dataset_name,
             )
+
+            print("standart_dataset dataset_test...")
             dataset_test = self.standart_dataset(
                 dataset=dataset_test,
                 dataset_name=dataset_name,
@@ -313,7 +438,7 @@ class ChatDatasetVerbalistUnion(Dataset):
                 tokenizer=self.tokenizer,
                 templates_path=self.templates_path,
                 test_size=test_size,
-                max_tokens_count=max_tokens_count,
+                max_tokens_count=self.max_tokens_count,
                 dataset_type="train",
                 status=status,
             )
@@ -321,7 +446,7 @@ class ChatDatasetVerbalistUnion(Dataset):
                 original_records=dataset_test,
                 tokenizer=self.tokenizer,
                 templates_path=self.templates_path,
-                max_tokens_count=max_tokens_count,
+                max_tokens_count=self.max_tokens_count,
                 test_size=test_size,
                 dataset_type="test",
                 status=status,
@@ -329,12 +454,12 @@ class ChatDatasetVerbalistUnion(Dataset):
 
             self.concat_dataset_train.extend(dataset_train.records)
             self.concat_dataset_test.extend(dataset_test.records)
-            print("=" * 100)
-            print("=" * 100)
-            print("=" * 100)
             print(
                 f"{dataset_name} -> train={len(dataset_train.records)} valid={len(dataset_test.records)}"
             )
+            print("=" * 100)
+            print("=" * 100)
+            print("=" * 100)
 
     def filter_dataset(
         self,
