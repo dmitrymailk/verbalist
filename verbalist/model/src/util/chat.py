@@ -138,6 +138,7 @@ class ConversationVerbalist:
         other_messages = messages[1:]
         while (
             self.count_tokens(tokenizer, [system_message] + other_messages) > max_tokens
+            and len([system_message] + other_messages) % 2 == 1
         ):
             other_messages = other_messages[2:]
         return [system_message] + other_messages
@@ -145,8 +146,8 @@ class ConversationVerbalist:
     def get_prompt(self, tokenizer, max_tokens: int = None, add_suffix: bool = False):
         final_text = ""
         messages = self.messages
-        # if max_tokens is not None:
-        #     messages = self.shrink(tokenizer, messages, max_tokens)
+        if max_tokens is not None:
+            messages = self.shrink(tokenizer, messages, max_tokens)
 
         for message in messages:
             message_text = self.message_template.format(**message)

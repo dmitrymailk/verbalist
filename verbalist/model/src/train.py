@@ -158,7 +158,8 @@ def train(
     )
     model_name = config["model_name"]
 
-    tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
+    # tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     tokenizer = fix_tokenizer(tokenizer)
     tokenizer.save_pretrained(output_dir)
 
@@ -235,6 +236,7 @@ def train(
             load_in_8bit=True,
             device_map=device_map,
             torch_dtype=torch_dtype,
+            trust_remote_code=True,
         )
         model = fix_model(model, tokenizer, use_resize=False)
         model = custom_prepare_model_for_int8_training(model)
@@ -264,6 +266,7 @@ def train(
             model_name,
             device_map=device_map,
             torch_dtype=torch_dtype,
+            trust_remote_code=True,
         )
         model = fix_model(model, tokenizer)
 

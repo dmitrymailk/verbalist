@@ -201,6 +201,9 @@ class ChatDatasetVerbalist(Dataset):
 
     def convert_record(self, record):
         conversation = ConversationVerbalist.from_template(self.templates_path)
+        record["conversation_text"] = record["conversation_text"][
+            : len(record["conversation_text"]) - len(record["conversation_text"]) % 2
+        ]
         conversation.expand(record["conversation_text"])
         full_text = conversation.get_prompt(self.tokenizer, add_suffix=False)
 
@@ -229,7 +232,9 @@ class ChatDatasetVerbalist(Dataset):
             while True:
                 try:
                     cur_start_idx = input_ids.index(start_token_id, cur_start_idx + 1)
-                    cur_end_idx = input_ids.index(end_token_id, cur_start_idx + 1) + 1
+                    cur_end_idx = (
+                        input_ids.index(end_token_id, cur_start_idx + 1 + 1) + 1
+                    )
                     cur_is_bot = (
                         input_ids[cur_start_idx:cur_end_idx].count(bot_token_id) >= 1
                     )
@@ -284,6 +289,7 @@ class ChatDatasetVerbalistUnion(Dataset):
         self.conversation_field = "conversation_text"
 
         self.get_dataset_parallel()
+        # self.get_datasets()
 
     def get_dataset_parallel(
         self,
