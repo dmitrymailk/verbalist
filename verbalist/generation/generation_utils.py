@@ -37,7 +37,7 @@ class VerbalistConversation:
             message_text = self.message_template.format(**message)
             final_text += message_text
         final_text += tokenizer.decode([self.start_token_id, self.bot_token_id])
-        
+
         return final_text.strip()
 
 
