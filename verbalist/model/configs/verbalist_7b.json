@@ -36,7 +36,7 @@
     "model_name": "meta-llama/Llama-2-7b-hf",
     "model_type": "causal",
     "max_tokens_count": 4000,
-    "use_flash": false,
+    "use_flash": true,
     "datasets_configs": [
         {
             "name": "dim/oasst_en",
@@ -50,7 +50,7 @@
         },
         {
             "name": "dim/lima",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
@@ -60,252 +60,252 @@
         },
         {
             "name": "dim/wikihow_en",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/wikihow_ru",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/essayforum_writing_prompts_6k",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/sharegpt_short_ru",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/openreview_prompts_65",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/roleplay_instruct_v2_final",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/kinomania_scripts",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/bugurt_thread_prompts",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/russian_lyrics_prompts",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/ru_instruct_gpt4",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/gpt_roleplay_realm",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/ultrachat_ru",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/scitldr",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/linux_man_pages_tldr_summarized",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/dolphin_ru_3k",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/runne_prompts",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/lurk_prompts",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/panorama_prompts",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/resh_edu_short_prompts",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/databricks_dolly_15k_ru",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/databricks_dolly_15k_en",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/grammarly_coedit",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/kinopoisk_prompts",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/medical_qa_ru_prompts",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/joke_explaination_prompts",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/stack_exchange_instruction_200k",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/oa_stackexchange_200k",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/scale_helpful_no_math",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/law_stackexchange_prompts",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/ficbook_prompts_best_10k",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/azbyka_logic_ru",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/povarenok",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/AO3_fandom_chatbot_1to1",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/habr_prompts_5k",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/what_where_when_50k",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/competition_math",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/sharegpt_short_en_30k",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/ru_turbo_alpaca_evol_instruct",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/ru_turbo_saiga",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/bugurt_completion_prompts_8k",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/tldr_17_50k",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/grade_school_math_instructions",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/tldr_news",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/grade_school_math_instructions_ru",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/dialogsum",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/HC3_ru",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/horoscopes_ru_10k",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/yandex_q_200k",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/panorama_prompts_10k",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/leetcodesolutions_en_2k",
-            "status": "ok",
+            "status": "all",
             "test_size": 1
         }
     ]

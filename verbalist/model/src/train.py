@@ -31,7 +31,8 @@ from src.dataset import ChatDatasetSaiga, ChatDatasetVerbalistUnion
 from src.util.dl import set_random_seed, fix_tokenizer, fix_model
 from src.util.io import read_jsonl
 
-from src.flash import patch_model
+# from src.flash import patch_model
+from src.flash2 import replace_attn_with_flash_attn
 
 os.environ["WANDB_LOG_MODEL"] = "checkpoint"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -144,6 +145,9 @@ def train(
     device_map = "auto"
 
     deepspeed_config = config.get("deepspeed")
+    use_flash = config.get("use_flash", False)
+    if use_flash:
+        replace_attn_with_flash_attn()
     trainer_config = config["trainer"]
     lora_config = config.get("lora")
     callbacks = [SavePeftModelCallback] if lora_config else []
@@ -167,7 +171,6 @@ def train(
     templates_path = config.get("templates_path", "saiga2_7b.json")
     only_target_loss = config.get("only_target_loss", True)
     mode = config.get("mode", "saiga_chat")
-    use_flash = config.get("use_flash", False)
     max_tokens_count = config["max_tokens_count"]
 
     if mode == "saiga_chat":
@@ -197,6 +200,90 @@ def train(
         )
     elif mode == "verbalist_chat":
         datasets_configs = config["datasets_configs"]
+        # datasets_configs = [
+        # {"name": "dim/oasst_en", "status": "ok", "test_size": 1},
+        # {"name": "dim/oasst_ru", "status": "ok", "test_size": 1},
+        # {"name": "dim/lima", "status": "all", "test_size": 1},
+        # {"name": "dim/logic_tasks_ru", "status": "ok", "test_size": 1},
+        # {"name": "dim/wikihow_en", "status": "all", "test_size": 1},
+        # {"name": "dim/wikihow_ru", "status": "all", "test_size": 1},
+        # {
+        #     "name": "dim/essayforum_writing_prompts_6k",
+        #     "status": "all",
+        #     "test_size": 1,
+        # },
+        # {"name": "dim/sharegpt_short_ru", "status": "all", "test_size": 1},
+        # {"name": "dim/openreview_prompts_65", "status": "all", "test_size": 1},
+        # {"name": "dim/roleplay_instruct_v2_final", "status": "all", "test_size": 1},
+        # {"name": "dim/kinomania_scripts", "status": "all", "test_size": 1},
+        # {"name": "dim/bugurt_thread_prompts", "status": "all", "test_size": 1},
+        # {"name": "dim/russian_lyrics_prompts", "status": "all", "test_size": 1},
+        # {"name": "dim/ru_instruct_gpt4", "status": "all", "test_size": 1},
+        # {"name": "dim/gpt_roleplay_realm", "status": "all", "test_size": 1},
+        # {"name": "dim/ultrachat_ru", "status": "all", "test_size": 1},
+        # {"name": "dim/scitldr", "status": "all", "test_size": 1},
+        # {
+        #     "name": "dim/linux_man_pages_tldr_summarized",
+        #     "status": "all",
+        #     "test_size": 1,
+        # },
+        # {"name": "dim/dolphin_ru_3k", "status": "all", "test_size": 1},
+        # {"name": "dim/runne_prompts", "status": "all", "test_size": 1},
+        # {"name": "dim/lurk_prompts", "status": "all", "test_size": 1},
+        # {"name": "dim/panorama_prompts", "status": "all", "test_size": 1},
+        # {"name": "dim/resh_edu_short_prompts", "status": "all", "test_size": 1},
+        # {"name": "dim/databricks_dolly_15k_ru", "status": "all", "test_size": 1},
+        # {"name": "dim/databricks_dolly_15k_en", "status": "all", "test_size": 1},
+        # {"name": "dim/grammarly_coedit", "status": "all", "test_size": 1},
+        # {"name": "dim/kinopoisk_prompts", "status": "all", "test_size": 1},
+        # {"name": "dim/medical_qa_ru_prompts", "status": "all", "test_size": 1},
+        # {"name": "dim/joke_explaination_prompts", "status": "all", "test_size": 1},
+        # {
+        #     "name": "dim/stack_exchange_instruction_200k",
+        #     "status": "all",
+        #     "test_size": 1,
+        # },
+        # {"name": "dim/oa_stackexchange_200k", "status": "all", "test_size": 1},
+        # {"name": "dim/scale_helpful_no_math", "status": "all", "test_size": 1},
+        # {"name": "dim/law_stackexchange_prompts", "status": "all", "test_size": 1},
+        # {"name": "dim/ficbook_prompts_best_10k", "status": "all", "test_size": 1},
+        # {"name": "dim/azbyka_logic_ru", "status": "all", "test_size": 1},
+        # {"name": "dim/povarenok", "status": "all", "test_size": 1},
+        # {"name": "dim/AO3_fandom_chatbot_1to1", "status": "all", "test_size": 1},
+        # {"name": "dim/habr_prompts_5k", "status": "all", "test_size": 1},
+        # {"name": "dim/what_where_when_50k", "status": "all", "test_size": 1},
+        # {"name": "dim/competition_math", "status": "all", "test_size": 1},
+        # {"name": "dim/sharegpt_short_en_30k", "status": "all", "test_size": 1},
+        # {
+        #     "name": "dim/ru_turbo_alpaca_evol_instruct",
+        #     "status": "all",
+        #     "test_size": 1,
+        # },
+        # {"name": "dim/ru_turbo_saiga", "status": "all", "test_size": 1},
+        # {
+        #     "name": "dim/bugurt_completion_prompts_8k",
+        #     "status": "all",
+        #     "test_size": 1,
+        # },
+        # {"name": "dim/tldr_17_50k", "status": "all", "test_size": 1},
+        # {
+        #     "name": "dim/grade_school_math_instructions",
+        #     "status": "all",
+        #     "test_size": 1,
+        # },
+        # {"name": "dim/tldr_news", "status": "all", "test_size": 1},
+        # {
+        #     "name": "dim/grade_school_math_instructions_ru",
+        #     "status": "all",
+        #     "test_size": 1,
+        # },
+        # {"name": "dim/dialogsum", "status": "all", "test_size": 1},
+        # {"name": "dim/HC3_ru", "status": "all", "test_size": 1},
+        # {"name": "dim/horoscopes_ru_10k", "status": "all", "test_size": 1},
+        # {"name": "dim/yandex_q_200k", "status": "all", "test_size": 1},
+        # {"name": "dim/panorama_prompts_10k", "status": "all", "test_size": 1},
+        # {"name": "dim/leetcodesolutions_en_2k", "status": "all", "test_size": 1},
+        # ]
 
         union_dataset = ChatDatasetVerbalistUnion(
             dataset_configs=datasets_configs,
@@ -270,8 +357,6 @@ def train(
         )
         model = fix_model(model, tokenizer)
 
-    if use_flash:
-        patch_model(model)
     # Default model generation params
     model.config.num_beams = 5
     model.config.max_length = max_tokens_count

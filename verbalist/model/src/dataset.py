@@ -185,7 +185,10 @@ class ChatDatasetVerbalist(Dataset):
             if tensors is None:
                 print(record)
                 assert False, "Something wrong with you chat record"
-            self.records.append(tensors)
+            elif tensors == 1:
+                print("empty")
+            else:
+                self.records.append(tensors)
             # torch.save(self.records, filename)
 
     def __len__(self):
@@ -199,12 +202,25 @@ class ChatDatasetVerbalist(Dataset):
             text, add_special_tokens=False, padding=False, truncation=False
         )["input_ids"]
 
+    def delete_special_tokens(self, text: str):
+        text = text.replace("<s>", "<_s_>")
+        text = text.replace("</s>", "<_/_s_>")
+        return text
+
     def convert_record(self, record):
         conversation = ConversationVerbalist.from_template(self.templates_path)
         record["conversation_text"] = record["conversation_text"][
             : len(record["conversation_text"]) - len(record["conversation_text"]) % 2
         ]
+        record["conversation_text"] = [
+            self.delete_special_tokens(item) for item in record["conversation_text"]
+        ]
+
         conversation.expand(record["conversation_text"])
+
+        if len(record["conversation_text"]) == 0:
+            return 1
+
         full_text = conversation.get_prompt(self.tokenizer, add_suffix=False)
 
         if not self.is_printed:
@@ -249,16 +265,21 @@ class ChatDatasetVerbalist(Dataset):
                 labels[start_idx:end_idx] = -100
 
             if (labels == start_token_id).sum() == 0:
-                print("=" * 100)
-                print("=" * 100)
-                print("=" * 100)
-                print(record)
-                print("=" * 100)
-                print(full_text)
-                print("=" * 100)
-                raise "Something wrong with you code"
+                # print("=" * 100)
+                # print("=" * 100)
+                # print("=" * 100)
+                # print(record)
+                # print("=" * 100)
+                # print(full_text)
+                # print("=" * 100)
+                assert False, {
+                    "full_text": full_text,
+                    "record": record,
+                }
 
-            assert (labels == start_token_id).sum() == (labels == end_token_id).sum()
+            assert (labels == start_token_id).sum() == (
+                labels == end_token_id
+            ).sum(), full_text
             assert (labels == bot_token_id).sum() >= (labels == start_token_id).sum()
 
             input_ids = torch.LongTensor(input_ids)
@@ -311,7 +332,7 @@ class ChatDatasetVerbalistUnion(Dataset):
         #         self.concat_dataset_train.extend(train)
         #         self.concat_dataset_test.extend(valid)
         datasets = Parallel(
-            n_jobs=30,
+            n_jobs=50,
             batch_size=1,
         )
         datasets = datasets(
@@ -579,7 +600,12 @@ class ChatDatasetVerbalistUnion(Dataset):
             "dim/habr_prompts_5k": self.habr_prompts,
         }
 
-        return convertsion_functions[dataset_name](dataset)
+        dataset = convertsion_functions[dataset_name](dataset)
+        new_dataset = []
+        for item in dataset:
+            if len(item[self.conversation_field]) > 0:
+                new_dataset.append(item)
+        return new_dataset
 
     def default_convert(self, dataset):
         return dataset
