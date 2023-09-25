@@ -510,15 +510,20 @@ class ChatDatasetVerbalistUnion(Dataset):
             "dim/lima": self.lima,
             "dim/logic_tasks_ru": self.logic_tasks_ru,
             "dim/what_where_when_3k": self.what_where_when_3k,
+            "dim/what_where_when_50k": self.what_where_when_3k,
             "dim/competition_math_selected": self.competition_math_selected,
+            "dim/competition_math": self.competition_math_selected,
             "dim/wikihow_en": self.wikihow,
             "dim/wikihow_ru": self.wikihow,
             "dim/leetcodesolutions_en_2k": self.leetcodesolutions_en_2k,
             "dim/sharegpt_short_en": self.sharegpt_short,
             "dim/sharegpt_short_ru": self.sharegpt_short,
+            "dim/sharegpt_short_en_30k": self.sharegpt_short,
             "dim/roleplay_instruct_v2_final": self.roleplay_instruct_v2_final,
             "dim/ru_turbo_alpaca_evol_instruct_3k": self.ru_turbo_alpaca_evol_instruct_3k,
+            "dim/ru_turbo_alpaca_evol_instruct": self.ru_turbo_alpaca_evol_instruct_3k,
             "dim/ru_turbo_saiga_3k": self.ru_turbo_saiga_3k,
+            "dim/ru_turbo_saiga": self.ru_turbo_saiga_3k,
             "dim/essayforum_writing_prompts_6k": self.essayforum_writing_prompts_6k,
             "dim/openreview_prompts_65": self.openreview_prompts_65,
             "dim/kinomania_scripts": self.kinomania_scripts,
@@ -528,25 +533,50 @@ class ChatDatasetVerbalistUnion(Dataset):
             "dim/gpt_roleplay_realm": self.gpt_roleplay_realm,
             "dim/ultrachat_ru": self.ultrachat_ru,
             "dim/tldr_17_3k": self.tldr_17_3k,
+            "dim/tldr_17_50k": self.tldr_17_3k,
             "dim/grade_school_math_instructions_3k": self.grade_school_math_instructions_3k,
+            "dim/grade_school_math_instructions": self.grade_school_math_instructions_3k,
             "dim/tldr_news_3k": self.tldr_news_3k,
+            "dim/tldr_news": self.tldr_news_3k,
             "dim/scitldr": self.scitldr,
             "dim/linux_man_pages_tldr_summarized": self.linux_man_pages_tldr_summarized,
             "dim/grade_school_math_instructions_ru_3k": self.grade_school_math_instructions_ru_3k,
+            "dim/grade_school_math_instructions_ru": self.grade_school_math_instructions_ru_3k,
             "dim/dialogsum_ru_3k": self.dialogsum_ru_3k,
             "dim/dialogsum_3k": self.dialogsum_3k,
+            "dim/dialogsum": self.dialogsum_3k,
             "dim/dolphin_ru_3k": self.dolphin_ru_3k,
             "dim/dolphin_flan1m_alpaca_uncensored_3k": self.dolphin_flan1m_alpaca_uncensored_3k,
             "dim/HC3_ru_8k": self.HC3_ru_8k,
+            "dim/HC3_ru": self.HC3_ru_8k,
             "dim/ru_word_games_3k": self.ru_word_games_3k,
             "dim/runne_prompts": self.runne_prompts,
             "dim/horoscopes_ru_1k": self.horoscopes_ru_1k,
+            "dim/horoscopes_ru_10k": self.horoscopes_ru_1k,
             "dim/huggingartists_prompts": self.huggingartists_prompts,
             "dim/lurk_prompts": self.lurk_prompts,
             "dim/yandex_q_10k": self.yandex_q_10k,
+            "dim/yandex_q_200k": self.yandex_q_10k,
             "dim/panorama_prompts": self.panorama_prompts,
+            "dim/panorama_prompts_10k": self.panorama_prompts,
             "dim/resh_edu_short_prompts": self.resh_edu_short_prompts,
             "dim/bugurt_completion_prompts": self.bugurt_completion_prompts,
+            "dim/bugurt_completion_prompts_8k": self.bugurt_completion_prompts,
+            "dim/databricks_dolly_15k_ru": self.databricks_dolly_15k,
+            "dim/databricks_dolly_15k_en": self.databricks_dolly_15k,
+            "dim/grammarly_coedit": self.grammarly_coedit,
+            "dim/kinopoisk_prompts": self.kinopoisk_prompts,
+            "dim/medical_qa_ru_prompts": self.medical_qa_ru_prompts,
+            "dim/joke_explaination_prompts": self.joke_explaination_prompts,
+            "dim/stack_exchange_instruction_200k": self.stack_exchange_instruction,
+            "dim/oa_stackexchange_200k": self.oa_stackexchange,
+            "dim/scale_helpful_no_math": self.scale_helpful_no_math,
+            "dim/law_stackexchange_prompts": self.law_stackexchange_prompts,
+            "dim/ficbook_prompts_best_10k": self.ficbook_prompts_best_10k,
+            "dim/azbyka_logic_ru": self.azbyka_logic_ru,
+            "dim/povarenok": self.povarenok,
+            "dim/AO3_fandom_chatbot_1to1": self.AO3_fandom_chatbot_1to1,
+            "dim/habr_prompts_5k": self.habr_prompts,
         }
 
         return convertsion_functions[dataset_name](dataset)
@@ -1021,6 +1051,192 @@ class ChatDatasetVerbalistUnion(Dataset):
             dataset[i][self.conversation_field].append(question)
 
             answer = dataset[i]["bugurt"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def databricks_dolly_15k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['instruction']}\n{dataset[i]['context']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["response"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def grammarly_coedit(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['src']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["tgt"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def kinopoisk_prompts(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["content"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def medical_qa_ru_prompts(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["content"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def joke_explaination_prompts(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["explaination"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def stack_exchange_instruction(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['question']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["response"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def oa_stackexchange(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['INSTRUCTION']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["RESPONSE"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def scale_helpful_no_math(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            conversation = [item["content"] for item in dataset[i]["chosen"]]
+            dataset[i][self.conversation_field] = conversation
+
+        return dataset
+
+    def law_stackexchange_prompts(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["solution"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def ficbook_prompts_best_10k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['prompt']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["solution_short_llama2"]
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def azbyka_logic_ru(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = f"{dataset[i]['task']}"
+            dataset[i][self.conversation_field].append(question)
+
+            answer = ""
+            if len(dataset[i]["long_solution"]) != 0:
+                answer = dataset[i]["long_solution"]
+            else:
+                answer = dataset[i]["solution"]
+
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def povarenok(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+            ingredients = dataset[i]["ingridients"]
+            ingredients = [item.lower() for item in ingredients]
+            ingredients = ", ".join(ingredients)
+
+            question = (
+                f"Что можно приготовить из следующих ингредиентов?\n{ingredients}"
+            )
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["full_receipt_text"]
+
+            dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def AO3_fandom_chatbot_1to1(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            conversation = dataset[i]["conversation"]
+            new_conversation = []
+            for item in conversation:
+                if item["role"] == "System":
+                    new_conversation.append(item["content"])
+
+                elif item["role"] == "User":
+                    new_conversation.append(item["content"])
+                else:
+                    content = f"{item['role']}: {item['content']}"
+                    new_conversation.append(content)
+            start_string = new_conversation.pop(0)
+            new_conversation[0] = f"{start_string}\n{new_conversation[0]}"
+            dataset[i][self.conversation_field] = new_conversation
+
+        return dataset
+
+    def habr_prompts(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+
+            question = dataset[i]["prompts"]
+            dataset[i][self.conversation_field].append(question)
+
+            answer = dataset[i]["solution_short_llama2"]
+
             dataset[i][self.conversation_field].append(answer)
 
         return dataset
