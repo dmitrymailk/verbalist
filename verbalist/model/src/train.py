@@ -27,11 +27,11 @@ from transformers import (
 from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
 from peft import get_peft_model, LoraConfig, prepare_model_for_kbit_training
 
-from src.dataset import ChatDatasetSaiga, ChatDatasetVerbalistUnion
+from src.dataset import ChatDatasetVerbalistUnion
 from src.util.dl import set_random_seed, fix_tokenizer, fix_model
 from src.util.io import read_jsonl
 
-from verbalist.model.src.flash import replace_attn_with_flash_attn
+from .flash import replace_attn_with_flash_attn
 
 os.environ["WANDB_LOG_MODEL"] = "checkpoint"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -126,14 +126,9 @@ def custom_prepare_model_for_int8_training(
 def train(
     config_file,
     checkpoint,
-    train_file,
-    val_file,
-    train_sample_rate,
-    val_sample_rate,
     output_dir,
     report_to,
     seed,
-    local_rank,
     omit_base_model_save,
 ):
     set_random_seed(seed)
@@ -168,7 +163,6 @@ def train(
 
     model_type = config.get("model_type", "causal")
     templates_path = config.get("templates_path", "saiga2_7b.json")
-    only_target_loss = config.get("only_target_loss", True)
     mode = config.get("mode", "saiga_chat")
     max_tokens_count = config["max_tokens_count"]
 
@@ -281,15 +275,10 @@ def train(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--config-file", type=str, required=True)
-    parser.add_argument("--train-file", type=str, required=True)
-    parser.add_argument("--val-file", type=str, required=True)
     parser.add_argument("--checkpoint", type=str, default=None)
     parser.add_argument("--output-dir", type=str, required=True)
-    parser.add_argument("--train-sample-rate", type=float, default=1.0)
-    parser.add_argument("--val-sample-rate", type=float, default=1.0)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--report-to", type=str, default="wandb")
-    parser.add_argument("--local_rank", type=int, default=0)
     parser.add_argument("--omit-base-model-save", action="store_true", default=False)
     args = parser.parse_args()
     train(**vars(args))

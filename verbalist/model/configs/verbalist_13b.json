@@ -36,7 +36,7 @@
     "model_name": "meta-llama/Llama-2-13b-hf",
     "model_type": "causal",
     "max_tokens_count": 4000,
-    "use_flash": false,
+    "use_flash": true,
     "datasets_configs": [
         {
             "name": "dim/oasst_en",

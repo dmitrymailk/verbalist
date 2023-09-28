@@ -2,24 +2,16 @@ from datasets import disable_caching
 
 disable_caching()
 
-import random
-import json
-from typing import Optional
-from dataclasses import dataclass
-from typing import List, Dict, Tuple, Any
+from typing import List, Dict
 
-import numpy as np
 import torch
-import torch.nn.functional as F
 from torch.utils.data import Dataset
-from transformers import AutoTokenizer, PreTrainedTokenizerBase
+from transformers import AutoTokenizer
 from tqdm import tqdm
 
-from src.util.chat import Conversation, ConversationVerbalist
-import hashlib
-import concurrent.futures
+from src.util.chat import ConversationVerbalist
+
 from joblib import Parallel, delayed
-import os
 
 
 from datasets import load_dataset
@@ -52,15 +44,6 @@ class ChatDatasetVerbalist(Dataset):
 
         self.records = []
 
-        # filename = f"{tokenizer.name_or_path}{templates_path}{max_tokens_count}{test_size}{status}".encode()
-        # print(filename)
-        # filename = hashlib.sha256(filename).hexdigest()
-        # filename = f"./models/temp/{filename}_{dataset_type}.bin"
-        # print(filename)
-
-        # if os.path.isfile(filename):
-        #     self.records = torch.load(filename)
-        # else:
         for record in tqdm(original_records):
             tensors = self.convert_record(record)
             if tensors is None:
@@ -70,7 +53,6 @@ class ChatDatasetVerbalist(Dataset):
                 print("empty")
             else:
                 self.records.append(tensors)
-            # torch.save(self.records, filename)
 
     def __len__(self):
         return len(self.records)
