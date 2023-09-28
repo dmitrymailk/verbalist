@@ -254,7 +254,7 @@
             "test_size": 1
         },
         {
-            "name": "dim/bugurt_completion_prompts_8k",
+            "name": "dim/bugurt_completion_prompts",
             "status": "all",
             "test_size": 1
         },
@@ -305,6 +305,21 @@
         },
         {
             "name": "dim/leetcodesolutions_en_2k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/forum_uristov_rf_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/dialogsum_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/huggingartists_prompts",
             "status": "all",
             "test_size": 1
         }

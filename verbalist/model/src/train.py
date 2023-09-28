@@ -31,8 +31,7 @@ from src.dataset import ChatDatasetSaiga, ChatDatasetVerbalistUnion
 from src.util.dl import set_random_seed, fix_tokenizer, fix_model
 from src.util.io import read_jsonl
 
-# from src.flash import patch_model
-from src.flash2 import replace_attn_with_flash_attn
+from verbalist.model.src.flash import replace_attn_with_flash_attn
 
 os.environ["WANDB_LOG_MODEL"] = "checkpoint"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -173,32 +172,7 @@ def train(
     mode = config.get("mode", "saiga_chat")
     max_tokens_count = config["max_tokens_count"]
 
-    if mode == "saiga_chat":
-        train_records = read_jsonl(train_file)
-        val_records = read_jsonl(val_file)
-        random.shuffle(train_records)
-        print(train_records[0])
-
-        train_dataset = ChatDatasetSaiga(
-            train_records,
-            tokenizer,
-            max_tokens_count=max_tokens_count,
-            sample_rate=train_sample_rate,
-            templates_path=templates_path,
-            only_target_loss=only_target_loss,
-            dataset_type="train",
-        )
-
-        val_dataset = ChatDatasetSaiga(
-            val_records,
-            tokenizer,
-            max_tokens_count=max_tokens_count,
-            sample_rate=train_sample_rate,
-            templates_path=templates_path,
-            only_target_loss=only_target_loss,
-            dataset_type="valid",
-        )
-    elif mode == "verbalist_chat":
+    if mode == "verbalist_chat":
         datasets_configs = config["datasets_configs"]
 
         union_dataset = ChatDatasetVerbalistUnion(
