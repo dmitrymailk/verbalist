@@ -29,7 +29,6 @@ from peft import get_peft_model, LoraConfig, prepare_model_for_kbit_training
 
 from src.dataset import ChatDatasetVerbalistUnion
 from src.util.dl import set_random_seed, fix_tokenizer, fix_model
-from src.util.io import read_jsonl
 
 from .flash import replace_attn_with_flash_attn
 
@@ -140,8 +139,8 @@ def train(
 
     deepspeed_config = config.get("deepspeed")
     use_flash = config.get("use_flash", False)
-    if use_flash:
-        replace_attn_with_flash_attn()
+    # if use_flash:
+    #     replace_attn_with_flash_attn()
     trainer_config = config["trainer"]
     lora_config = config.get("lora")
     callbacks = [SavePeftModelCallback] if lora_config else []

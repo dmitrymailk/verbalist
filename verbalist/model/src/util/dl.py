@@ -92,8 +92,8 @@ def fix_model(model, tokenizer, use_resize=True):
             break
     assert model.config.eos_token_id is not None
 
-    if use_resize:
-        model.resize_token_embeddings(len(tokenizer))
+    # if use_resize:
+    #     model.resize_token_embeddings(len(tokenizer))
 
     return model
 

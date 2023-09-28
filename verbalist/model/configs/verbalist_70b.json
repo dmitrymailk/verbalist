@@ -1,0 +1,47 @@
+{
+    "trainer": {
+        "evaluation_strategy": "steps",
+        "per_device_train_batch_size": 1,
+        "per_device_eval_batch_size": 1,
+        "gradient_accumulation_steps": 128,
+        "eval_steps": 50,
+        "save_steps": 50,
+        "logging_steps": 5,
+        "learning_rate": 0.0003,
+        "num_train_epochs": 5,
+        "lr_scheduler_type": "cosine",
+        "warmup_steps": 30,
+        "fp16": true,
+        "bf16": false,
+        "torch_compile": false,
+        "optim": "adamw_torch_fused"
+    },
+    "lora": {
+        "r": 16,
+        "lora_alpha": 16,
+        "lora_dropout": 0.05,
+        "bias": "none",
+        "target_modules": [
+            "q_proj",
+            "v_proj",
+            "k_proj",
+            "o_proj"
+        ],
+        "task_type": "CAUSAL_LM"
+    },
+    "load_in_4bit": false,
+    "only_target_loss": true,
+    "mode": "verbalist_chat",
+    "templates_path": "internal_prompts/verbalist.json",
+    "model_name": "TheBloke/Llama-2-70B-GPTQ",
+    "model_type": "causal",
+    "max_tokens_count": 2048,
+    "use_flash": true,
+    "datasets_configs": [
+        {
+            "name": "dim/oasst_en",
+            "status": "ok",
+            "test_size": 1
+        }
+    ]
+}

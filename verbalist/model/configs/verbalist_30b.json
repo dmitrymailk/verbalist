@@ -50,21 +50,12 @@
         },
         {
             "name": "dim/lima",
+            "status": "all",
             "test_size": 1
         },
         {
             "name": "dim/logic_tasks_ru",
             "status": "ok",
-            "test_size": 1
-        },
-        {
-            "name": "dim/what_where_when_3k",
-            "status": "all",
-            "test_size": 1
-        },
-        {
-            "name": "dim/competition_math_selected",
-            "status": "all",
             "test_size": 1
         },
         {
@@ -78,12 +69,7 @@
             "test_size": 1
         },
         {
-            "name": "dim/leetcodesolutions_en_2k",
-            "status": "all",
-            "test_size": 1
-        },
-        {
-            "name": "dim/sharegpt_short_en",
+            "name": "dim/essayforum_writing_prompts_6k",
             "status": "all",
             "test_size": 1
         },
@@ -93,27 +79,12 @@
             "test_size": 1
         },
         {
-            "name": "dim/roleplay_instruct_v2_final",
-            "status": "all",
-            "test_size": 1
-        },
-        {
-            "name": "dim/ru_turbo_alpaca_evol_instruct_3k",
-            "status": "all",
-            "test_size": 1
-        },
-        {
-            "name": "dim/ru_turbo_saiga_3k",
-            "status": "all",
-            "test_size": 1
-        },
-        {
-            "name": "dim/essayforum_writing_prompts_6k",
-            "status": "all",
-            "test_size": 1
-        },
-        {
             "name": "dim/openreview_prompts_65",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/roleplay_instruct_v2_final",
             "status": "all",
             "test_size": 1
         },
@@ -148,21 +119,6 @@
             "test_size": 1
         },
         {
-            "name": "dim/tldr_17_3k",
-            "status": "all",
-            "test_size": 1
-        },
-        {
-            "name": "dim/grade_school_math_instructions_3k",
-            "status": "all",
-            "test_size": 1
-        },
-        {
-            "name": "dim/tldr_news_3k",
-            "status": "all",
-            "test_size": 1
-        },
-        {
             "name": "dim/scitldr",
             "status": "all",
             "test_size": 1
@@ -173,32 +129,7 @@
             "test_size": 1
         },
         {
-            "name": "dim/grade_school_math_instructions_ru_3k",
-            "status": "all",
-            "test_size": 1
-        },
-        {
-            "name": "dim/dialogsum_ru_3k",
-            "status": "all",
-            "test_size": 1
-        },
-        {
-            "name": "dim/dialogsum_3k",
-            "status": "all",
-            "test_size": 1
-        },
-        {
             "name": "dim/dolphin_ru_3k",
-            "status": "all",
-            "test_size": 1
-        },
-        {
-            "name": "dim/dolphin_flan1m_alpaca_uncensored_3k",
-            "status": "all",
-            "test_size": 1
-        },
-        {
-            "name": "dim/HC3_ru_8k",
             "status": "all",
             "test_size": 1
         },
@@ -208,22 +139,7 @@
             "test_size": 1
         },
         {
-            "name": "dim/horoscopes_ru_1k",
-            "status": "all",
-            "test_size": 1
-        },
-        {
-            "name": "dim/huggingartists_prompts",
-            "status": "all",
-            "test_size": 1
-        },
-        {
             "name": "dim/lurk_prompts",
-            "status": "all",
-            "test_size": 1
-        },
-        {
-            "name": "dim/yandex_q_10k",
             "status": "all",
             "test_size": 1
         },
@@ -238,7 +154,172 @@
             "test_size": 1
         },
         {
+            "name": "dim/databricks_dolly_15k_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/databricks_dolly_15k_en",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/grammarly_coedit",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/kinopoisk_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/medical_qa_ru_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/joke_explaination_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/stack_exchange_instruction_200k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/oa_stackexchange_200k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/scale_helpful_no_math",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/law_stackexchange_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/ficbook_prompts_best_10k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/azbyka_logic_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/povarenok",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/AO3_fandom_chatbot_1to1",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/habr_prompts_5k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/what_where_when_50k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/competition_math",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/sharegpt_short_en_30k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/ru_turbo_alpaca_evol_instruct",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/ru_turbo_saiga",
+            "status": "all",
+            "test_size": 1
+        },
+        {
             "name": "dim/bugurt_completion_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/tldr_17_50k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/grade_school_math_instructions",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/tldr_news",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/grade_school_math_instructions_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/dialogsum",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/HC3_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/horoscopes_ru_10k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/yandex_q_200k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/panorama_prompts_10k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/leetcodesolutions_en_2k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/forum_uristov_rf_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/dialogsum_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/huggingartists_prompts",
             "status": "all",
             "test_size": 1
         }
