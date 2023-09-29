@@ -139,8 +139,8 @@ def train(
 
     deepspeed_config = config.get("deepspeed")
     use_flash = config.get("use_flash", False)
-    # if use_flash:
-    #     replace_attn_with_flash_attn()
+    if use_flash:
+        replace_attn_with_flash_attn()
     trainer_config = config["trainer"]
     lora_config = config.get("lora")
     callbacks = [SavePeftModelCallback] if lora_config else []

@@ -1,9 +1,9 @@
 {
     "trainer": {
         "evaluation_strategy": "steps",
-        "per_device_train_batch_size": 8,
-        "per_device_eval_batch_size": 8,
-        "gradient_accumulation_steps": 16,
+        "per_device_train_batch_size": 4,
+        "per_device_eval_batch_size": 4,
+        "gradient_accumulation_steps": 32,
         "eval_steps": 50,
         "save_steps": 50,
         "logging_steps": 5,
@@ -14,7 +14,7 @@
         "fp16": false,
         "bf16": true,
         "torch_compile": false,
-        "optim": "adamw_torch_fused"
+        "optim": "adamw_torch"
     },
     "lora": {
         "r": 16,
@@ -180,11 +180,6 @@
         },
         {
             "name": "dim/joke_explaination_prompts",
-            "status": "all",
-            "test_size": 1
-        },
-        {
-            "name": "dim/stack_exchange_instruction_200k",
             "status": "all",
             "test_size": 1
         },
