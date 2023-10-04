@@ -1,4 +1,5 @@
-from datasets import disable_caching
+from datasets import disable_caching, DatasetDict, load_dataset
+import datasets as dt
 
 disable_caching()
 
@@ -12,9 +13,6 @@ from tqdm import tqdm
 from src.util.chat import ConversationVerbalist
 
 from joblib import Parallel, delayed
-
-
-from datasets import load_dataset
 
 
 class ChatDatasetVerbalist(Dataset):
@@ -156,9 +154,9 @@ class ChatDatasetVerbalist(Dataset):
 class ChatDatasetVerbalistUnion(Dataset):
     def __init__(
         self,
-        dataset_configs: list[dict],
-        tokenizer: AutoTokenizer,
-        templates_path: str,
+        dataset_configs: list[dict] = None,
+        tokenizer: AutoTokenizer = None,
+        templates_path: str = None,
         max_tokens_count: int = 2048,
     ) -> None:
         self.dataset_configs = dataset_configs
@@ -172,7 +170,7 @@ class ChatDatasetVerbalistUnion(Dataset):
 
         self.conversation_field = "conversation_text"
 
-        self.get_dataset_parallel()
+        # self.get_dataset_parallel()
         # self.get_datasets()
 
     def get_dataset_parallel(
@@ -189,6 +187,60 @@ class ChatDatasetVerbalistUnion(Dataset):
             train, valid = dataset
             self.concat_dataset_train.extend(train)
             self.concat_dataset_test.extend(valid)
+
+    def get_datasets_dict(self):
+        datasets = Parallel(
+            n_jobs=50,
+            batch_size=1,
+        )
+        datasets = datasets(
+            [delayed(self.get_dataset_dict)(config) for config in self.dataset_configs]
+        )
+        new_datasets = {}
+        for dataset in datasets:
+            dataset_name = dataset["name"]
+            dataset_name = dataset_name.replace("/", "_")
+            dataset = dataset["dataset"]
+            dataset = dt.Dataset.from_list(dataset)
+            dataset = dataset.select_columns([self.conversation_field])
+            new_datasets[dataset_name] = dataset
+
+        new_datasets = DatasetDict(new_datasets)
+        return new_datasets
+
+    def get_dataset_dict(self, dataset_config):
+        dataset_name = dataset_config["name"]
+        status = dataset_config.get("status", "all")
+        print(f"{dataset_name} - {status}")
+
+        dataset = load_dataset(
+            dataset_name,
+            download_mode="force_redownload",
+            keep_in_memory=True,
+        )
+        dataset = dataset["train"].filter(
+            lambda item: self.filter_dataset(
+                dataset_name=dataset_name,
+                item=item,
+                status=status,
+            ),
+            keep_in_memory=True,
+            load_from_cache_file=False,
+        )
+
+        dataset = dataset.to_list()
+
+        print(f"standart_dataset {dataset_name}...")
+        dataset = self.standart_dataset(
+            dataset=dataset,
+            dataset_name=dataset_name,
+        )
+        dataset = {
+            "name": dataset_name,
+            "dataset": dataset,
+        }
+
+        return dataset
 
     def get_dataset(self, dataset_config):
         dataset_name = dataset_config["name"]
