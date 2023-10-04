@@ -522,3 +522,18 @@
 На данный момент обучаются 3 модели llama2_7b, llama2_13b и llama1_30b.
 
 За графиками их обучения можно следить в прямом эфире https://api.wandb.ai/links/dimweb/7rh0c7iz
+
+### Код обучения
+
+- [общий алгоритм обучения](https://github.com/dmitrymailk/verbalist/blob/master/verbalist/model/src/train.py)
+- [формирование датасетов для обучения](https://github.com/dmitrymailk/verbalist/blob/master/verbalist/model/src/dataset.py#L176)
+
+### Оборудование
+
+Все обучение и инференс производится на видеокарте A100, на других видеокартах была обнаружена существенная деградация качества при инференсе, данный аспект требует дополнительного изучения.
+
+- NVIDIA A100-SXM4-40GB
+- NVIDIA-SMI 535.54.03
+- Driver Version: 535.54.03
+- CUDA Version: 12.2
+- torch==2.0.1+cu118
