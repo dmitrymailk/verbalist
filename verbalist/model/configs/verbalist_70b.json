@@ -17,8 +17,8 @@
         "optim": "adamw_torch_fused"
     },
     "lora": {
-        "r": 16,
-        "lora_alpha": 16,
+        "r": 4,
+        "lora_alpha": 32,
         "lora_dropout": 0.05,
         "bias": "none",
         "target_modules": [
@@ -36,7 +36,7 @@
     "model_name": "TheBloke/Llama-2-70B-GPTQ",
     "model_type": "causal",
     "max_tokens_count": 2048,
-    "use_flash": true,
+    "use_flash": false,
     "datasets_configs": [
         {
             "name": "dim/oasst_en",
