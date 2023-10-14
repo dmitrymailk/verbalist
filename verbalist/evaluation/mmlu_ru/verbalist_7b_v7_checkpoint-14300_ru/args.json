@@ -1,0 +1,1 @@
+{"hf_model_id": "/home/kosenko/verbalist/verbalist/model/models/verbalist_7b_v7/checkpoint-14300/adapter_model", "k_shot": 5, "lang": "ru", "output_dir": "verbalist_7b_v7_checkpoint-14300_ru"}

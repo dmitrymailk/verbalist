@@ -171,6 +171,7 @@ def train(
             max_tokens_count=max_tokens_count,
         )
         union_dataset.get_dataset_parallel()
+        # union_dataset.get_datasets()
 
         train_dataset = union_dataset.concat_dataset_train
         val_dataset = union_dataset.concat_dataset_test

@@ -176,3 +176,7 @@ verbalist/model/valid.jsonl
 chat_gpt_token
 raw.jsonl.gz
 fic_anx_gen 3.csv
+gpt_token
+*eval*.log
+verbalist/datasets/ai_society_translated/datasets/*
+verbalist/inference/text_generation_inference/data/*
