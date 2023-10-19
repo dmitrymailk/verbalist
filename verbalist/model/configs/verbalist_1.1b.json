@@ -1,0 +1,212 @@
+{
+    "trainer": {
+        "evaluation_strategy": "steps",
+        "per_device_train_batch_size": 4,
+        "per_device_eval_batch_size": 4,
+        "gradient_accumulation_steps": 32,
+        "eval_steps": 50,
+        "save_steps": 50,
+        "logging_steps": 5,
+        "learning_rate": 0.0003,
+        "num_train_epochs": 5,
+        "lr_scheduler_type": "cosine",
+        "warmup_steps": 30,
+        "fp16": false,
+        "bf16": true,
+        "torch_compile": false,
+        "optim": "adamw_torch"
+    },
+    "lora": {
+        "r": 16,
+        "lora_alpha": 16,
+        "lora_dropout": 0.05,
+        "bias": "none",
+        "target_modules": [
+            "q_proj",
+            "v_proj",
+            "k_proj",
+            "o_proj"
+        ],
+        "task_type": "CAUSAL_LM"
+    },
+    "load_in_8bit": false,
+    "only_target_loss": true,
+    "mode": "verbalist_chat",
+    "templates_path": "internal_prompts/verbalist.json",
+    "model_name": "PY007/TinyLlama-1.1B-intermediate-step-480k-1T",
+    "model_type": "causal",
+    "max_tokens_count": 2048,
+    "use_flash": true,
+    "datasets_configs": [
+        {
+            "name": "dim/oasst_en",
+            "status": "ok",
+            "test_size": 1
+        },
+        {
+            "name": "dim/oasst_ru",
+            "status": "ok",
+            "test_size": 1
+        },
+        {
+            "name": "dim/lima",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/logic_tasks_ru",
+            "status": "ok",
+            "test_size": 1
+        },
+        {
+            "name": "dim/wikihow_en",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/wikihow_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/sharegpt_short_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/roleplay_instruct_v2_final",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/ru_instruct_gpt4",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/gpt_roleplay_realm",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/ultrachat_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/scitldr",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/linux_man_pages_tldr_summarized",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/dolphin_ru_3k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/runne_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/databricks_dolly_15k_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/databricks_dolly_15k_en",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/grammarly_coedit",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/joke_explaination_prompts",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/scale_helpful_no_math",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/azbyka_logic_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/AO3_fandom_chatbot_1to1",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/competition_math",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/sharegpt_short_en_30k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/ru_turbo_alpaca_evol_instruct",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/ru_turbo_saiga",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/tldr_17_50k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/grade_school_math_instructions",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/tldr_news",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/grade_school_math_instructions_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/dialogsum",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/HC3_ru",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/leetcodesolutions_en_2k",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/dialogsum_ru",
+            "status": "all",
+            "test_size": 1
+        }
+    ]
+}

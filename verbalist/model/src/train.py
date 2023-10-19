@@ -135,8 +135,8 @@ def train(
 
     deepspeed_config = config.get("deepspeed")
     use_flash = config.get("use_flash", False)
-    if use_flash:
-        replace_attn_with_flash_attn()
+    # if use_flash:
+    #     replace_attn_with_flash_attn()
     trainer_config = config["trainer"]
     lora_config = config.get("lora")
     callbacks = [SavePeftModelCallback] if lora_config else []
@@ -238,7 +238,7 @@ def train(
             device_map=device_map,
             torch_dtype=torch_dtype,
             trust_remote_code=True,
-            # use_flash_attention_2=use_flash,
+            use_flash_attention_2=use_flash,
         )
         model = fix_model(model, tokenizer)
 

@@ -42,9 +42,13 @@ def evaluate_mt_bench_ru(
         eos_token_id=2,
         pad_token_id=0,
         max_new_tokens=2048,
-        no_repeat_ngram_size=15,
+        no_repeat_ngram_size=20,
         repetition_penalty=1.1,
-        do_sample=False,
+        temperature=0.5,
+        top_k=30,
+        top_p=0.9,
+        # do_sample=True,
+        num_beams=1
     )
     for i in tqdm(range(len(dataset))):
         item = dataset[i]
@@ -54,8 +58,8 @@ def evaluate_mt_bench_ru(
             conversation.add_user_message(turn)
             prompt = conversation.get_prompt(tokenizer)
             # print("PROMPT", prompt)
-            # print("USER: ", turn)
-            print("USER: ", prompt)
+            print("USER: ", turn)
+            # print("USER: ", prompt)
             output = generate(
                 model,
                 tokenizer,
@@ -79,9 +83,9 @@ def evaluate_mt_bench_ru(
 
 if __name__ == "__main__":
     weights_path = (
-        "verbalist/model/models/verbalist_7b_v7/checkpoint-16500/adapter_model"
+        "verbalist/model/models/verbalist_7b_v7/checkpoint-25000/adapter_model"
     )
-    model_name = "verbalist_7b_v7_checkpoint_16500.json"
+    model_name = "verbalist_7b_v7_checkpoint_25000.json"
     output_save_path = f"verbalist/evaluation/mt_bench/llm_judge/data/mt_bench/model_answer/{model_name}"
     evaluate_mt_bench_ru(
         weights_path=weights_path,
