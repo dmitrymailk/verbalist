@@ -182,3 +182,4 @@ verbalist/datasets/ai_society_translated/datasets/*
 verbalist/inference/text_generation_inference/data/*
 *.db
 postgre_creds
+valid_evaluations
