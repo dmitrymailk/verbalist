@@ -71,8 +71,8 @@ with torch.no_grad():
     # создаем сессию подключения к бд
     with Session(autoflush=False, bind=engine) as db:
         # for key in tqdm(range(3_00_000, len(dataset))):
-        for key in tqdm(range(1_00_000, len(dataset))):
-        # for key in tqdm(range(28000, len(dataset))):
+        # for key in tqdm(range(1_00_000, len(dataset))):
+        for key in tqdm(range(28000, len(dataset))):
             trans = (
                 db.query(SlimOrcaTranslation).filter(SlimOrcaTranslation.key == key).first()
             )
