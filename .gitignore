@@ -183,3 +183,4 @@ verbalist/inference/text_generation_inference/data/*
 *.db
 postgre_creds
 valid_evaluations
+slim_orca_202311070301.csv

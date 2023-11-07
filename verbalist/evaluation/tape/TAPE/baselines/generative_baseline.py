@@ -79,7 +79,7 @@ def generate(
     top_k: Optional[int] = 5,
     top_p: Optional[float] = 0.95,
     temperature: Optional[float] = 1.0,
-    num_beams: Optional[int] = None,
+    num_beams: Optional[int] = 1,
     no_repeat_ngram_size: Optional[int] = 3,
     device: str = "cuda",
 ) -> List[str]:
