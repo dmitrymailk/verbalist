@@ -162,7 +162,19 @@ def train(
     max_tokens_count = config["max_tokens_count"]
 
     if mode == "verbalist_chat":
-        datasets_configs = config["datasets_configs"]
+        # datasets_configs = config["datasets_configs"]
+        datasets_configs = [
+            # {
+            #     "name": "dim/oasst_en",
+            #     "status": "ok",
+            #     "test_size": 1,
+            # },
+            {
+                "name": "dim/SlimOrcaRU",
+                "status": "all",
+                "test_size": 1,
+            },
+        ]
 
         union_dataset = ChatDatasetVerbalistUnion(
             dataset_configs=datasets_configs,
@@ -170,8 +182,8 @@ def train(
             templates_path=templates_path,
             max_tokens_count=max_tokens_count,
         )
-        union_dataset.get_dataset_parallel()
-        # union_dataset.get_datasets()
+        # union_dataset.get_dataset_parallel()
+        union_dataset.get_datasets()
 
         train_dataset = union_dataset.concat_dataset_train
         val_dataset = union_dataset.concat_dataset_test

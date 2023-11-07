@@ -11,8 +11,6 @@ mkdir -p ./models/$OUTPUT
 export WANDB_NAME=$OUTPUT
 
 python -u -m src.train --config-file configs/verbalist_7b.json \
-	--train-file ./train.jsonl \
-	--val-file valid.jsonl  \
 	--output-dir models/$OUTPUT \
 	--omit-base-model-save 
 	

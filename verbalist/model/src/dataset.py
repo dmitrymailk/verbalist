@@ -80,7 +80,9 @@ class ChatDatasetVerbalist(Dataset):
         conversation.expand(record["conversation_text"])
 
         if len(record["conversation_text"]) == 0:
-            return 1
+            print(conversation)
+            assert False
+            # return 1
 
         full_text = conversation.get_prompt(self.tokenizer, add_suffix=False)
 
@@ -251,6 +253,7 @@ class ChatDatasetVerbalistUnion(Dataset):
             dataset_name,
             download_mode="force_redownload",
             keep_in_memory=True,
+            ignore_verifications=True,
         )
         dataset = dataset["train"].filter(
             lambda item: self.filter_dataset(
@@ -499,6 +502,7 @@ class ChatDatasetVerbalistUnion(Dataset):
             "dim/AO3_fandom_chatbot_1to1": self.AO3_fandom_chatbot_1to1,
             "dim/habr_prompts_5k": self.habr_prompts,
             "dim/forum_uristov_rf_prompts": self.forum_uristov_rf_prompts,
+            "dim/SlimOrcaRU": self.SlimOrcaRU,
         }
 
         dataset = convertsion_functions[dataset_name](dataset)
@@ -1178,5 +1182,25 @@ class ChatDatasetVerbalistUnion(Dataset):
             answer = dataset[i]["solution"]
 
             dataset[i][self.conversation_field].append(answer)
+
+        return dataset
+
+    def SlimOrcaRU(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+            conversations = dataset[i]["conversations"]
+            initial_prompt = ""
+            if (
+                conversations[0]["from"] == "system"
+                and len(conversations[0]["value"]) > 0
+            ):
+                initial_prompt = conversations[0]["value_ru"]
+
+            for j in range(1, len(conversations)):
+                value_ru = conversations[j]["value_ru"]
+                if j == 1 and len(initial_prompt) > 0:
+                    value_ru = initial_prompt + "\n" + value_ru
+                dataset[i][self.conversation_field].append(value_ru)
+            # dataset[i][self.conversation_field].append(question)
 
         return dataset
