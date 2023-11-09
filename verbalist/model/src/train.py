@@ -162,19 +162,59 @@ def train(
     max_tokens_count = config["max_tokens_count"]
 
     if mode == "verbalist_chat":
-        # datasets_configs = config["datasets_configs"]
-        datasets_configs = [
-            # {
-            #     "name": "dim/oasst_en",
-            #     "status": "ok",
-            #     "test_size": 1,
-            # },
-            {
-                "name": "dim/SlimOrcaRU",
-                "status": "all",
-                "test_size": 1,
-            },
-        ]
+        datasets_configs = config["datasets_configs"]
+        # datasets_configs = [
+        #     # {
+        #     #     "name": "dim/oasst_en",
+        #     #     "status": "ok",
+        #     #     "test_size": 1,
+        #     # },
+        #     # {
+        #     #     "name": "dim/SlimOrcaRU",
+        #     #     "status": "all",
+        #     #     "test_size": 1,
+        #     # },
+        #     # {
+        #     #     "name": "dim/thudn_agent_instruct",
+        #     #     "status": "all",
+        #     #     "test_size": 1,
+        #     # },
+        #     # {
+        #     #     "name": "dim/pseudolab_medsi",
+        #     #     "status": "all",
+        #     #     "test_size": 1,
+        #     # },
+        #     # {
+        #     #     "name": "dim/camel_ai_chemistry",
+        #     #     "status": "all",
+        #     #     "test_size": 1,
+        #     # },
+        #     # {
+        #     #     "name": "dim/camel_ai_biology",
+        #     #     "status": "all",
+        #     #     "test_size": 1,
+        #     # },
+        #     # {
+        #     #     "name": "dim/camel_ai_physics",
+        #     #     "status": "all",
+        #     #     "test_size": 1,
+        #     # },
+        #     # {
+        #     #     "name": "dim/norquinal_claude_multiround_chat_30k",
+        #     #     "status": "all",
+        #     #     "test_size": 1,
+        #     # },
+        #     # {
+        #     #     "name": "dim/litra_ru_essays",
+        #     #     "status": "all",
+        #     #     "test_size": 1,
+        #     # },
+        #     # {
+        #     #     "name": "dim/lmsys_chatbot_arena_conversations_gpt4_gpt35turbo_claudy",
+        #     #     "status": "all",
+        #     #     "test_size": 1,
+        #     # },
+        # ]
 
         union_dataset = ChatDatasetVerbalistUnion(
             dataset_configs=datasets_configs,

@@ -253,7 +253,7 @@ class ChatDatasetVerbalistUnion(Dataset):
             dataset_name,
             download_mode="force_redownload",
             keep_in_memory=True,
-            ignore_verifications=True,
+            # ignore_verifications=True,
         )
         dataset = dataset["train"].filter(
             lambda item: self.filter_dataset(
@@ -499,10 +499,20 @@ class ChatDatasetVerbalistUnion(Dataset):
             "dim/ficbook_prompts_best_10k": self.ficbook_prompts_best_10k,
             "dim/azbyka_logic_ru": self.azbyka_logic_ru,
             "dim/povarenok": self.povarenok,
+            "dim/povarenok_10k": self.povarenok,
             "dim/AO3_fandom_chatbot_1to1": self.AO3_fandom_chatbot_1to1,
             "dim/habr_prompts_5k": self.habr_prompts,
             "dim/forum_uristov_rf_prompts": self.forum_uristov_rf_prompts,
             "dim/SlimOrcaRU": self.SlimOrcaRU,
+            "dim/thudn_agent_instruct": self.thudn_agent_instruct,
+            "dim/pseudolab_medsi": self.pseudolab_medsi,
+            "dim/camel_ai_chemistry": self.camel_ai_chemistry,
+            "dim/camel_ai_physics": self.camel_ai_chemistry,
+            "dim/camel_ai_biology": self.camel_ai_chemistry,
+            "dim/norquinal_claude_multiround_chat_30k": self.norquinal_claude_multiround_chat_30k,
+            "dim/meta_math_meta_math_qa_50k": self.meta_math_meta_math_qa,
+            "dim/lmsys_chatbot_arena_conversations_gpt4_gpt35turbo_claudy": self.lmsys_chatbot_arena_conversations_gpt4_gpt35turbo_claudy,
+            "dim/litra_ru_essays": self.litra_ru_essays,
         }
 
         dataset = convertsion_functions[dataset_name](dataset)
@@ -1202,5 +1212,78 @@ class ChatDatasetVerbalistUnion(Dataset):
                     value_ru = initial_prompt + "\n" + value_ru
                 dataset[i][self.conversation_field].append(value_ru)
             # dataset[i][self.conversation_field].append(question)
+
+        return dataset
+
+    def thudn_agent_instruct(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+            conversations = dataset[i]["conversations"]
+
+            for j in range(len(conversations)):
+                value = conversations[j]["value"]
+                dataset[i][self.conversation_field].append(value)
+
+        return dataset
+
+    def pseudolab_medsi(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+            instruction = dataset[i]["instruction"]
+            dataset[i][self.conversation_field].append(instruction)
+            output = dataset[i]["output"]
+            dataset[i][self.conversation_field].append(output)
+
+        return dataset
+
+    def camel_ai_chemistry(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+            instruction = dataset[i]["message_1"]
+            dataset[i][self.conversation_field].append(instruction)
+            output = dataset[i]["message_2"]
+            dataset[i][self.conversation_field].append(output)
+
+        return dataset
+
+    def meta_math_meta_math_qa(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+            instruction = dataset[i]["query"]
+            dataset[i][self.conversation_field].append(instruction)
+            output = dataset[i]["response"]
+            dataset[i][self.conversation_field].append(output)
+
+        return dataset
+
+    def norquinal_claude_multiround_chat_30k(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+            conversations = dataset[i]["conversations"]
+
+            for j in range(len(conversations)):
+                value = conversations[j]["value"]
+                dataset[i][self.conversation_field].append(value)
+
+        return dataset
+
+    def lmsys_chatbot_arena_conversations_gpt4_gpt35turbo_claudy(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+            conversations = dataset[i]["conversation"]
+
+            for j in range(len(conversations)):
+                value = conversations[j]["content"]
+                dataset[i][self.conversation_field].append(value)
+
+        return dataset
+
+    def litra_ru_essays(self, dataset):
+        for i in range(len(dataset)):
+            dataset[i][self.conversation_field] = []
+            instruction = dataset[i]["title"]
+            dataset[i][self.conversation_field].append(instruction)
+            output = dataset[i]["text"]
+            dataset[i][self.conversation_field].append(output)
 
         return dataset
