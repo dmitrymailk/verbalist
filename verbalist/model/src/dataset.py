@@ -80,9 +80,7 @@ class ChatDatasetVerbalist(Dataset):
         conversation.expand(record["conversation_text"])
 
         if len(record["conversation_text"]) == 0:
-            print(conversation)
-            assert False
-            # return 1
+            return 1
 
         full_text = conversation.get_prompt(self.tokenizer, add_suffix=False)
 
@@ -518,8 +516,10 @@ class ChatDatasetVerbalistUnion(Dataset):
         dataset = convertsion_functions[dataset_name](dataset)
         new_dataset = []
         for item in dataset:
-            if len(item[self.conversation_field]) > 0:
+            item_len = len(item[self.conversation_field])
+            if item_len > 0:
                 new_dataset.append(item)
+
         return new_dataset
 
     def default_convert(self, dataset):

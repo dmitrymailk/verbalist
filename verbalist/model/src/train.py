@@ -222,8 +222,8 @@ def train(
             templates_path=templates_path,
             max_tokens_count=max_tokens_count,
         )
-        # union_dataset.get_dataset_parallel()
-        union_dataset.get_datasets()
+        union_dataset.get_dataset_parallel()
+        # union_dataset.get_datasets()
 
         train_dataset = union_dataset.concat_dataset_train
         val_dataset = union_dataset.concat_dataset_test
@@ -258,7 +258,7 @@ def train(
             device_map=device_map,
             torch_dtype=torch_dtype,
             trust_remote_code=True,
-            # use_flash_attention_2=use_flash,
+            use_flash_attention_2=use_flash,
         )
         model = fix_model(model, tokenizer, use_resize=False)
         model = custom_prepare_model_for_int8_training(model)

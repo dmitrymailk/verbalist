@@ -1,9 +1,9 @@
 {
     "trainer": {
         "evaluation_strategy": "steps",
-        "per_device_train_batch_size": 4,
-        "per_device_eval_batch_size": 4,
-        "gradient_accumulation_steps": 32,
+        "per_device_train_batch_size": 2,
+        "per_device_eval_batch_size": 2,
+        "gradient_accumulation_steps": 64,
         "eval_steps": 50,
         "save_steps": 50,
         "logging_steps": 5,
@@ -325,6 +325,11 @@
         },
         {
             "name": "dim/lmsys_chatbot_arena_conversations_gpt4_gpt35turbo_claudy",
+            "status": "all",
+            "test_size": 1
+        },
+        {
+            "name": "dim/meta_math_meta_math_qa_50k",
             "status": "all",
             "test_size": 1
         }
