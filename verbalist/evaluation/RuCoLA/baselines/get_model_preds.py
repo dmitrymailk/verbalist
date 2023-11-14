@@ -2,8 +2,14 @@ from argparse import ArgumentParser
 from functools import partial
 
 import pandas as pd
-from transformers import AutoModelForSequenceClassification, BertTokenizer, AutoTokenizer, DataCollatorWithPadding, \
-    TrainingArguments, Trainer
+from transformers import (
+    AutoModelForSequenceClassification,
+    BertTokenizer,
+    AutoTokenizer,
+    DataCollatorWithPadding,
+    TrainingArguments,
+    Trainer,
+)
 
 from finetune_mlm import (
     MODEL_TO_HUB_NAME as MLM_MODEL_TO_HUB_NAME,
@@ -31,7 +37,9 @@ def main(models):
 
         data_collator = DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8)
 
-        model = AutoModelForSequenceClassification.from_pretrained(f"checkpoints_best/{model_name}")
+        model = AutoModelForSequenceClassification.from_pretrained(
+            f"checkpoints_best/{model_name}"
+        )
 
         training_args = TrainingArguments(
             output_dir=f"temp",
@@ -70,6 +78,8 @@ def main(models):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-m", "--models", choices=MLM_MODEL_TO_HUB_NAME.keys(), nargs="+", required=True)
+    parser.add_argument(
+        "-m", "--models", choices=MLM_MODEL_TO_HUB_NAME.keys(), nargs="+", required=True
+    )
     args = parser.parse_args()
     main(args.models)
