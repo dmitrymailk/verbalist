@@ -148,7 +148,7 @@ def load_llama_model(model_id: str) -> tp.Tuple:
 
 
 def load_verbalist_model(model_id: str) -> tp.Tuple:
-    replace_attn_with_flash_attn()
+    # replace_attn_with_flash_attn()
     print("load_verbalist_model")
 
     tokenizer = transformers.AutoTokenizer.from_pretrained(
@@ -160,8 +160,10 @@ def load_verbalist_model(model_id: str) -> tp.Tuple:
         model_id,
         torch_dtype=torch.float16,
         load_in_8bit=False,
-        device_map="auto",
+        # device_map="auto",
+        device_map={"": 0},
         trust_remote_code=True,
+        # use_flash_attention_2=True,
     )
     model = peft.PeftModel.from_pretrained(
         model,
@@ -202,16 +204,17 @@ def load_saiga_model(model_id: str) -> tp.Tuple:
     config = peft.PeftConfig.from_pretrained(model_id)
     model = transformers.AutoModelForCausalLM.from_pretrained(
         config.base_model_name_or_path,
-        load_in_8bit=True,
+        # load_in_8bit=True,
         torch_dtype=torch.float16,
-        device_map="auto",
+        # device_map="auto",
+        device_map={"": 0},
     )
     model = peft.PeftModel.from_pretrained(model, model_id, torch_dtype=torch.float16)
     model.eval()
     logger.info(
         f"Model id: {model_id}, params: {model.num_parameters()}, dtype: {model.dtype}"
     )
-    return (tokenizer, model, 2000, "saiga")  # Saiga was trained with 2000
+    return (tokenizer, model, 4000, "saiga")  # Saiga was trained with 2000
 
 
 def load_model_components(model_id: str) -> tp.Tuple:
@@ -232,12 +235,14 @@ def load_model_components(model_id: str) -> tp.Tuple:
         "IlyaGusev/saiga_65b_lora",
         "IlyaGusev/gigasaiga_lora",
         "IlyaGusev/saiga2_13b_lora",
+        "IlyaGusev/saiga_mistral_7b_lora",
     ]
 
     verbalist_models = [
         "/home/kosenko/verbalist/verbalist/model/models/verbalist_7b_v7/checkpoint-14300/adapter_model",
         "/home/kosenko/verbalist/verbalist/model/models/verbalist_7b_v7/checkpoint-7000/adapter_model",
         "/home/kosenko/verbalist/verbalist/model/models/verbalist_7b_v7/checkpoint-16500/adapter_model",
+        "/home/kosenko/verbalist/verbalist/model/models/verbalist_7b_v9/checkpoint-800/adapter_model",
     ]
 
     open_orca_mistral = [
