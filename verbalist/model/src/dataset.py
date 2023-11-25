@@ -10,7 +10,7 @@ from torch.utils.data import Dataset
 from transformers import AutoTokenizer
 from tqdm import tqdm
 
-from src.util.chat import ConversationVerbalist
+from src.util.chat import ConversationVerbalist, ConversationVerbalistOpenchat
 
 from joblib import Parallel, delayed
 
@@ -42,7 +42,8 @@ class ChatDatasetVerbalist(Dataset):
 
         self.records = []
 
-        for record in tqdm(original_records):
+    def start_process(self):
+        for record in tqdm(self.original_records):
             tensors = self.convert_record(record)
             if tensors is None:
                 print(record)
@@ -148,6 +149,110 @@ class ChatDatasetVerbalist(Dataset):
                 "input_ids": input_ids[: self.max_tokens_count],
                 "attention_mask": attention_mask[: self.max_tokens_count],
                 "labels": labels[: self.max_tokens_count],
+            }
+
+
+class ChatDatasetVerbalistOpenchat(ChatDatasetVerbalist):
+    def __init__(
+        self,
+        dataset_weight: float = 1.0,
+        *args,
+        **kwags,
+    ):
+        super().__init__(*args, **kwags)
+        self.dataset_weight = dataset_weight
+
+    def convert_record(self, record):
+        data_quality = ""
+
+        if self.dataset_weight < 0.5:
+            data_quality = "low_quality"
+        elif self.dataset_weight >= 0.5 and self.dataset_weight < 1.0:
+            data_quality = "medium_quality"
+        elif self.dataset_weight == 1.0:
+            data_quality = "high_quality"
+
+        conversation = ConversationVerbalistOpenchat.from_template(
+            self.templates_path,
+            data_quality=data_quality,
+        )
+        # record["conversation_text"] = record["conversation_text"][
+        #     : len(record["conversation_text"]) - len(record["conversation_text"]) % 2
+        # ]
+        record["conversation_text"] = [
+            self.delete_special_tokens(item) for item in record["conversation_text"]
+        ]
+
+        conversation.expand(record["conversation_text"])
+
+        if len(record["conversation_text"]) <= 1:
+            return 1
+
+        full_text = conversation.get_prompt(self.tokenizer, add_suffix=False)
+
+        if not self.is_printed:
+            print("Prompt example")
+            print(full_text)
+            self.is_printed = True
+
+        input_ids = self.get_tokens(full_text)
+        input_ids.insert(0, self.tokenizer.bos_token_id)
+        input_ids = torch.LongTensor(input_ids)
+        labels = input_ids.clone()
+        attention_mask = input_ids.new_ones(input_ids.size())
+        weights = input_ids.new_zeros(input_ids.size()).float()
+
+        if self.only_target_loss:
+            start_token_id = conversation.get_start_token_id()
+            end_token_id = conversation.get_end_token_id()
+            bot_token_id = conversation.get_bot_token_id()
+
+            spans = []
+            cur_start_idx = -1
+            cur_end_idx = -1
+            cur_is_bot = False
+
+            input_ids = input_ids.tolist()
+            while True:
+                try:
+                    cur_start_idx = input_ids.index(start_token_id, cur_start_idx + 1)
+                    cur_end_idx = (
+                        input_ids.index(end_token_id, cur_start_idx + 1 + 1) + 1
+                    )
+                    cur_is_bot = (
+                        input_ids[cur_start_idx:cur_end_idx].count(bot_token_id) >= 1
+                    )
+                    if not cur_is_bot:
+                        spans.append((cur_start_idx, cur_end_idx))
+                except ValueError:
+                    break
+
+            for start_idx, end_idx in spans:
+                start_idx = max(0, start_idx)
+                end_idx = min(len(input_ids), end_idx)
+                labels[start_idx:end_idx] = -100
+
+            if (labels == start_token_id).sum() == 0:
+                assert False, {
+                    "full_text": full_text,
+                    "record": record,
+                }
+
+            assert (labels == start_token_id).sum() == (
+                labels == end_token_id
+            ).sum(), full_text
+            assert (labels == bot_token_id).sum() >= (labels == start_token_id).sum()
+
+            input_ids = torch.LongTensor(input_ids)
+            # стандартный коллатор умеет работать только с целочисленными последовательностями
+            # поэтому вместо того чтобы хранить float мы будем хранить int, а потом делить на 10
+            # в лоссе
+            weights[labels != -100] = self.dataset_weight
+            return {
+                "input_ids": input_ids[: self.max_tokens_count],
+                "attention_mask": attention_mask[: self.max_tokens_count],
+                "labels": labels[: self.max_tokens_count],
+                "weights": weights[: self.max_tokens_count],
             }
 
 
@@ -294,6 +399,7 @@ class ChatDatasetVerbalistUnion(Dataset):
             dataset_type="train",
             status=status,
         )
+        dataset_train.start_process()
         dataset_test = ChatDatasetVerbalist(
             original_records=dataset_test,
             tokenizer=self.tokenizer,
@@ -303,6 +409,7 @@ class ChatDatasetVerbalistUnion(Dataset):
             dataset_type="test",
             status=status,
         )
+        dataset_test.start_process()
 
         # self.concat_dataset_train.extend(dataset_train.records)
         # self.concat_dataset_test.extend(dataset_test.records)
@@ -369,6 +476,7 @@ class ChatDatasetVerbalistUnion(Dataset):
                 dataset_type="train",
                 status=status,
             )
+            dataset_train.start_process()
             dataset_test = ChatDatasetVerbalist(
                 original_records=dataset_test,
                 tokenizer=self.tokenizer,
@@ -378,6 +486,7 @@ class ChatDatasetVerbalistUnion(Dataset):
                 dataset_type="test",
                 status=status,
             )
+            dataset_test.start_process()
 
             self.concat_dataset_train.extend(dataset_train.records)
             self.concat_dataset_test.extend(dataset_test.records)
@@ -1287,3 +1396,86 @@ class ChatDatasetVerbalistUnion(Dataset):
             dataset[i][self.conversation_field].append(output)
 
         return dataset
+
+
+class ChatDatasetVerbalistOpenchatUnion(ChatDatasetVerbalistUnion):
+    def get_dataset(self, dataset_config):
+        dataset_name = dataset_config["name"]
+        dataset_weight = dataset_config["weight"]
+        status = dataset_config.get("status", "all")
+        print(f"{dataset_name} - {status}")
+
+        dataset = load_dataset(
+            dataset_name,
+            download_mode="force_redownload",
+            keep_in_memory=True,
+            # ignore_verifications=True,
+        )
+        dataset = dataset["train"].filter(
+            lambda item: self.filter_dataset(
+                dataset_name=dataset_name,
+                item=item,
+                status=status,
+            ),
+            keep_in_memory=True,
+            load_from_cache_file=False,
+        )
+
+        test_size = dataset_config["test_size"]
+        dataset = dataset.train_test_split(
+            test_size=test_size,
+            keep_in_memory=True,
+            load_from_cache_file=False,
+        )
+
+        dataset_train = dataset["train"].to_list()
+        dataset_test = dataset["test"].to_list()
+
+        print("standart_dataset dataset_train...")
+        dataset_train = self.standart_dataset(
+            dataset=dataset_train,
+            dataset_name=dataset_name,
+        )
+
+        print("standart_dataset dataset_test...")
+        dataset_test = self.standart_dataset(
+            dataset=dataset_test,
+            dataset_name=dataset_name,
+        )
+
+        dataset_train = ChatDatasetVerbalistOpenchat(
+            original_records=dataset_train,
+            tokenizer=self.tokenizer,
+            templates_path=self.templates_path,
+            test_size=test_size,
+            max_tokens_count=self.max_tokens_count,
+            dataset_type="train",
+            status=status,
+            dataset_weight=dataset_weight,
+        )
+        dataset_train.start_process()
+
+        dataset_test = ChatDatasetVerbalistOpenchat(
+            original_records=dataset_test,
+            tokenizer=self.tokenizer,
+            templates_path=self.templates_path,
+            max_tokens_count=self.max_tokens_count,
+            test_size=test_size,
+            dataset_type="test",
+            status=status,
+            dataset_weight=dataset_weight,
+        )
+        dataset_test.start_process()
+
+        # self.concat_dataset_train.extend(dataset_train.records)
+        # self.concat_dataset_test.extend(dataset_test.records)
+        print(
+            f"{dataset_name} -> train={len(dataset_train.records)} valid={len(dataset_test.records)}"
+        )
+        print("=" * 100)
+        print("=" * 100)
+        print("=" * 100)
+        return [
+            dataset_train.records,
+            dataset_test.records,
+        ]

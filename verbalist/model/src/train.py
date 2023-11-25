@@ -11,6 +11,7 @@ from transformers import (
     AutoModelForCausalLM,
     DataCollatorForTokenClassification,
 )
+
 from transformers import (
     Trainer,
     TrainingArguments,
@@ -23,13 +24,16 @@ from transformers import (
 from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
 from peft import get_peft_model, LoraConfig
 
-from src.dataset import ChatDatasetVerbalistUnion
+from src.dataset import ChatDatasetVerbalistUnion, ChatDatasetVerbalistOpenchatUnion
 from src.util.dl import set_random_seed, fix_tokenizer, fix_model
-
+from src.util.custom_models import VerbalistOpenchatMistralForCausalLM
 from .flash import replace_attn_with_flash_attn
 
 os.environ["WANDB_LOG_MODEL"] = "checkpoint"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+from transformers.data.data_collator import DataCollatorMixin
+from dataclasses import dataclass
 
 
 class TrainerNoBaseSave(Trainer):
@@ -76,6 +80,74 @@ class SavePeftModelCallback(TrainerCallback):
         peft_model_path = os.path.join(checkpoint_folder, "adapter_model")
         kwargs["model"].save_pretrained(peft_model_path)
         return control
+
+
+@dataclass
+class DataCollatorOpenchat(DataCollatorForTokenClassification):
+    tokenizer = (None,)
+    padding = True
+    max_length = None
+    pad_to_multiple_of = None
+    label_pad_token_id: int = -100
+    return_tensors: str = "pt"
+
+    def torch_call(self, features):
+        import torch
+
+        label_name = "labels"
+        weights_name = "weights"
+        labels = [feature[label_name] for feature in features]
+        weights = [feature[weights_name] for feature in features]
+
+        no_labels_features = [
+            {k: v for k, v in feature.items() if k in ["input_ids", "attention_mask"]}
+            for feature in features
+        ]
+        # print(no_labels_features)
+        batch = self.tokenizer.pad(
+            no_labels_features,
+            padding=self.padding,
+            max_length=self.max_length,
+            pad_to_multiple_of=self.pad_to_multiple_of,
+            return_tensors="pt",
+        )
+
+        self.pad_sequence(
+            sequence=labels,
+            batch=batch,
+            field_name=label_name,
+        )
+        self.pad_sequence(
+            sequence=weights,
+            batch=batch,
+            field_name=weights_name,
+        )
+        batch[label_name] = torch.tensor(batch[label_name], dtype=torch.int64)
+        batch[weights_name] = torch.tensor(batch[weights_name], dtype=torch.float16)
+
+        return batch
+
+    def pad_sequence(self, sequence, batch, field_name):
+        sequence_length = batch["input_ids"].shape[1]
+        padding_side = self.tokenizer.padding_side
+
+        def to_list(tensor_or_iterable):
+            if isinstance(tensor_or_iterable, torch.Tensor):
+                return tensor_or_iterable.tolist()
+            return list(tensor_or_iterable)
+
+        if padding_side == "right":
+            batch[field_name] = [
+                to_list(label)
+                + [self.label_pad_token_id] * (sequence_length - len(label))
+                for label in sequence
+            ]
+        else:
+            batch[field_name] = [
+                [self.label_pad_token_id] * (sequence_length - len(label))
+                + to_list(label)
+                for label in sequence
+            ]
 
 
 def custom_prepare_model_for_int8_training(
@@ -147,6 +219,7 @@ def train(
         report_to=report_to,
         ddp_find_unused_parameters=None,
         deepspeed=deepspeed_config,
+        remove_unused_columns=False,
         **trainer_config,
     )
     model_name = config["model_name"]
@@ -161,90 +234,61 @@ def train(
     mode = config.get("mode", "verbalist_chat")
     max_tokens_count = config["max_tokens_count"]
 
+    datasets_configs = config["datasets_configs"]
+    # datasets_configs = [
+    #     {
+    #         "name": "dim/oasst_ru",
+    #         "status": "ok",
+    #         "test_size": 1,
+    #         "weight": 0.3,
+    #     },
+    # ]
+    data_collator = None
     if mode == "verbalist_chat":
-        datasets_configs = config["datasets_configs"]
-        # datasets_configs = [
-        #     # {
-        #     #     "name": "dim/oasst_en",
-        #     #     "status": "ok",
-        #     #     "test_size": 1,
-        #     # },
-        #     # {
-        #     #     "name": "dim/SlimOrcaRU",
-        #     #     "status": "all",
-        #     #     "test_size": 1,
-        #     # },
-        #     # {
-        #     #     "name": "dim/thudn_agent_instruct",
-        #     #     "status": "all",
-        #     #     "test_size": 1,
-        #     # },
-        #     # {
-        #     #     "name": "dim/pseudolab_medsi",
-        #     #     "status": "all",
-        #     #     "test_size": 1,
-        #     # },
-        #     # {
-        #     #     "name": "dim/camel_ai_chemistry",
-        #     #     "status": "all",
-        #     #     "test_size": 1,
-        #     # },
-        #     # {
-        #     #     "name": "dim/camel_ai_biology",
-        #     #     "status": "all",
-        #     #     "test_size": 1,
-        #     # },
-        #     # {
-        #     #     "name": "dim/camel_ai_physics",
-        #     #     "status": "all",
-        #     #     "test_size": 1,
-        #     # },
-        #     # {
-        #     #     "name": "dim/norquinal_claude_multiround_chat_30k",
-        #     #     "status": "all",
-        #     #     "test_size": 1,
-        #     # },
-        #     # {
-        #     #     "name": "dim/litra_ru_essays",
-        #     #     "status": "all",
-        #     #     "test_size": 1,
-        #     # },
-        #     # {
-        #     #     "name": "dim/lmsys_chatbot_arena_conversations_gpt4_gpt35turbo_claudy",
-        #     #     "status": "all",
-        #     #     "test_size": 1,
-        #     # },
-        # ]
-
         union_dataset = ChatDatasetVerbalistUnion(
             dataset_configs=datasets_configs,
             tokenizer=tokenizer,
             templates_path=templates_path,
             max_tokens_count=max_tokens_count,
         )
-        union_dataset.get_dataset_parallel()
-        # union_dataset.get_datasets()
+        data_collator = DataCollatorForTokenClassification(
+            tokenizer,
+            pad_to_multiple_of=8,
+            max_length=max_tokens_count,
+        )
+    elif mode == "verbalist_openchat":
+        union_dataset = ChatDatasetVerbalistOpenchatUnion(
+            dataset_configs=datasets_configs,
+            tokenizer=tokenizer,
+            templates_path=templates_path,
+            max_tokens_count=max_tokens_count,
+        )
+        data_collator = DataCollatorOpenchat(
+            tokenizer,
+            pad_to_multiple_of=8,
+            max_length=max_tokens_count,
+        )
 
-        train_dataset = union_dataset.concat_dataset_train
-        val_dataset = union_dataset.concat_dataset_test
-        print(f"Train length={len(train_dataset)} Valid length={len(val_dataset)}")
-    else:
-        assert False
-        # pass
+    union_dataset.get_dataset_parallel()
+    # union_dataset.get_datasets()
 
-    data_collator = DataCollatorForTokenClassification(
-        tokenizer,
-        pad_to_multiple_of=8,
-    )
+    train_dataset = union_dataset.concat_dataset_train
+    val_dataset = union_dataset.concat_dataset_test
+    print(f"Train length={len(train_dataset)} Valid length={len(val_dataset)}")
 
-    print("INPUT_IDS")
     print(data_collator([train_dataset[0], train_dataset[1]])["input_ids"][0])
     print("MASK")
     print(data_collator([train_dataset[0], train_dataset[1]])["attention_mask"][0])
     print("LABELS")
     print(data_collator([train_dataset[0], train_dataset[1]])["labels"][0])
+    print("WEIGHTS")
+    print(data_collator([train_dataset[0], train_dataset[1]]).get("weights", []))
 
-    model_types = {"causal": AutoModelForCausalLM, "seq2seq": AutoModelForSeq2SeqLM}
+    model_types = {
+        "causal": AutoModelForCausalLM,
+        "seq2seq": AutoModelForSeq2SeqLM,
+        "verbalist_mistral_openchat": VerbalistOpenchatMistralForCausalLM,
+    }
     load_in_8bit = bool(config.get("load_in_8bit", False))
     load_in_4bit = bool(config.get("load_in_4bit", False))
     use_bf16 = bool(trainer_config.get("bf16", False))

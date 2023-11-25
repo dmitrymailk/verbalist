@@ -24,6 +24,7 @@ export WANDB_NAME=$OUTPUT
 # nohup python -u -m src.train --config-file configs/verbalist_70b.json \
 # nohup python -u -m src.train --config-file configs/mistral_7b_oasst1_dolly.json \
 # nohup python -u -m src.train --config-file configs/verbalist_1.1b.json \
-nohup python -u -m src.train --config-file configs/verbalist_7b.json \
+# nohup python -u -m src.train --config-file configs/verbalist_7b.json \
+nohup python -u -m src.train --config-file configs/verbalist_openchat_7b.json \
 	--output-dir models/$OUTPUT \
 	--omit-base-model-save > ./models/$OUTPUT/training.log &
