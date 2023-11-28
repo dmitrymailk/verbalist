@@ -79,6 +79,15 @@ class VerbalistOpenchatMistralForCausalLM(MistralForCausalLM):
             weights /= 10
             weights = weights[..., 1:].contiguous()
             weights = weights.view(-1)
+            # не знаю почему они в оригинале используют sum вместо mean
+            # loss = (
+            #     weights
+            #     * torch.nn.functional.cross_entropy(
+            #         shift_logits,
+            #         shift_labels,
+            #         reduction="none",
+            #     )
+            # ).sum()
             loss = (
                 weights
                 * torch.nn.functional.cross_entropy(
@@ -86,7 +95,7 @@ class VerbalistOpenchatMistralForCausalLM(MistralForCausalLM):
                     shift_labels,
                     reduction="none",
                 )
-            ).sum()
+            ).mean()
 
         if not return_dict:
             output = (logits,) + outputs[1:]
