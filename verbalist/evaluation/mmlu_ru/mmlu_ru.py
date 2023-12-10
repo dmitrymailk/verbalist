@@ -186,14 +186,14 @@ def load_open_orca_mistral_model(model_id: str) -> tp.Tuple:
     model = transformers.AutoModelForCausalLM.from_pretrained(
         model_id,
         torch_dtype=torch.float16,
-        device_map="auto",
+        device_map={"": 0},
         trust_remote_code=True,
     )
     model.eval()
     logger.info(
         f"Model id: {model_id}, params: {model.num_parameters()}, dtype: {model.dtype}"
     )
-    return (tokenizer, model, 4000, "open_orca_mistral")
+    return (tokenizer, model, 8192, "open_orca_mistral")
 
 
 def load_saiga_model(model_id: str) -> tp.Tuple:
@@ -247,6 +247,9 @@ def load_model_components(model_id: str) -> tp.Tuple:
 
     open_orca_mistral = [
         "Open-Orca/Mistral-7B-OpenOrca",
+        "dim/mistral-open-orca-ru-4600-step",
+        "mistralai/Mistral-7B-Instruct-v0.1",
+        "mistralai/Mistral-7B-v0.1"
     ]
 
     if model_id in llama_models:

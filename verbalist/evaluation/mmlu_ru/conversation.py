@@ -82,12 +82,13 @@ class MistralOrcaConversation(Conversation):
         )
 
     def get_prompt(self) -> str:
-        prompt = self.system_prompt
+        # prompt = self.system_prompt
+        prompt = ""
         for role, text in self.messages:
             if text:
-                prompt += f"<|im_start|> {role}\n {text} <|im_end|>\n"
+                prompt += f"<|im_start|>{role}\n{text}<|im_end|>\n"
             else:
-                prompt += f"<|im_start|> {role} "
+                prompt += f"<|im_start|>{role}\n"
         return prompt
 
 
