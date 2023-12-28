@@ -243,13 +243,14 @@ def load_model_components(model_id: str) -> tp.Tuple:
         "/home/kosenko/verbalist/verbalist/model/models/verbalist_7b_v7/checkpoint-7000/adapter_model",
         "/home/kosenko/verbalist/verbalist/model/models/verbalist_7b_v7/checkpoint-16500/adapter_model",
         "/home/kosenko/verbalist/verbalist/model/models/verbalist_7b_v9/checkpoint-800/adapter_model",
+        "/home/kosenko/verbalist/verbalist/model/models/verbalist_7b_v10/checkpoint-1650/adapter_model",
     ]
 
     open_orca_mistral = [
         "Open-Orca/Mistral-7B-OpenOrca",
         "dim/mistral-open-orca-ru-4600-step",
         "mistralai/Mistral-7B-Instruct-v0.1",
-        "mistralai/Mistral-7B-v0.1"
+        "mistralai/Mistral-7B-v0.1",
     ]
 
     if model_id in llama_models:

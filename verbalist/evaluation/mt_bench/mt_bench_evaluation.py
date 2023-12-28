@@ -23,15 +23,15 @@ def evaluate_mt_bench_ru(
     config = PeftConfig.from_pretrained(weights_path)
     model = AutoModelForCausalLM.from_pretrained(
         config.base_model_name_or_path,
-        load_in_8bit=True,
+        # load_in_8bit=True,
         # load_in_4bit=True,
         torch_dtype=torch.float16,
-        device_map="auto",
+        # device_map="auto",
+        device_map={"": 0},
     )
     model = PeftModel.from_pretrained(
         model,
         weights_path,
-        torch_dtype=torch.float32,
     )
     model.eval()
 
@@ -48,7 +48,7 @@ def evaluate_mt_bench_ru(
         top_k=30,
         top_p=0.9,
         # do_sample=True,
-        num_beams=1
+        num_beams=1,
     )
     for i in tqdm(range(len(dataset))):
         item = dataset[i]

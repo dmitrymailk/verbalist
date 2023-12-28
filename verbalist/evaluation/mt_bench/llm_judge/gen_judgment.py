@@ -5,6 +5,7 @@ python gen_judgment.py --model-list [LIST-OF-MODEL-ID] --parallel [num-concurren
 import os
 
 os.environ["OPENAI_API_KEY"] = open("./gpt_token").read()
+os.environ["OPENAI_BASE_URL"] = "https://openai.deeppavlov.ai/v1"
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor
