@@ -193,7 +193,7 @@ def load_open_orca_mistral_model(model_id: str) -> tp.Tuple:
     logger.info(
         f"Model id: {model_id}, params: {model.num_parameters()}, dtype: {model.dtype}"
     )
-    return (tokenizer, model, 8192, "open_orca_mistral")
+    return [tokenizer, model, 8192, "open_orca_mistral"]
 
 
 def load_saiga_model(model_id: str) -> tp.Tuple:
@@ -253,6 +253,8 @@ def load_model_components(model_id: str) -> tp.Tuple:
         "mistralai/Mistral-7B-v0.1",
     ]
 
+    tinyllama_openorca = ["dim/tiny-llama-2T-open-orca-ru-10000-step"]
+
     if model_id in llama_models:
         return load_llama_model(model_id)
     elif model_id in saiga_models:
@@ -262,6 +264,10 @@ def load_model_components(model_id: str) -> tp.Tuple:
         return params
     elif model_id in open_orca_mistral:
         params = load_open_orca_mistral_model(model_id)
+        return params
+    elif model_id in tinyllama_openorca:
+        params = load_open_orca_mistral_model(model_id)
+        params[-1] = "tinyllama_open_orca"
         return params
     else:
         raise Exception(f"Probably not supported: {model_id}.")

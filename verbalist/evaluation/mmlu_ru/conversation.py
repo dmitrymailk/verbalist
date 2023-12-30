@@ -92,11 +92,30 @@ class MistralOrcaConversation(Conversation):
         return prompt
 
 
+class TinyllamaOrcaConversation(Conversation):
+    def __init__(self):
+        super().__init__(
+            system_prompt="<s>[INST] <<SYS>>\n Вы помощник ИИ, который помогает людям находить информацию. <</SYS>>\n",
+            roles=("user", "assistant"),
+        )
+
+    def get_prompt(self) -> str:
+        prompt = self.system_prompt
+        # prompt = ""
+        for role, text in self.messages:
+            if text:
+                prompt += f"{text} [/INST]\n"
+            else:
+                prompt += f"\n"
+        return prompt
+
+
 conversation_classes = {
     "saiga": SaigaConversation,
     "verbalist": VerbalistConversation,
     "llama": LlamaConversation,
     "open_orca_mistral": MistralOrcaConversation,
+    "tinyllama_open_orca": TinyllamaOrcaConversation,
 }
 
 
